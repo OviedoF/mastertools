@@ -1,0 +1,8 @@
+# Despliegue en Netlify. El runtime de Next.js se instala solo al detectar el framework.
+[build]
+  command = "pnpm build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "22"
+  PNPM_FLAGS = "--frozen-lockfile"
