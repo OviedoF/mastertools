@@ -47,7 +47,7 @@ export function ServicesGrid({
   return (
     <Section tone="niebla" id="servicios">
       <Reveal>
-        <SectionHeading eyebrow="Nueve líneas de servicio" title={title} text={text} />
+        <SectionHeading eyebrow={`${services.length === 12 ? "Doce" : services.length} líneas de servicio`} title={title} text={text} />
       </Reveal>
       <Reveal className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3" stagger={0.07} y={32}>
         {services.map((s) => (

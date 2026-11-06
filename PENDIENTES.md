@@ -1,51 +1,50 @@
 # Master Tools · datos pendientes para cerrar la web
 
-Lista de lo que necesitamos de Master Tools para reemplazar las marcas
-"Por completar" del prototipo y dejar los textos listos para publicar.
-Agrupado por quién lo responde. Con esto cerramos la etapa 4 y pasamos
-a desarrollo.
+Actualizado el 6 de noviembre de 2026 con las observaciones de Master Tools
+sobre el documento de estructura (versión con doce líneas de servicio).
+Lo que ya respondieron está cargado en el sitio y en el panel de edición.
 
-## Gerencia
+## Resuelto con el documento nuevo
 
-- [ ] **NIT** completo, para el pie de página, la política de datos y las cotizaciones.
-- [ ] **Un solo correo comercial** para publicar en la web (hoy figura comercial@mastertools.tech como propuesta). Los correos por área (gerencia@, operaciones@, calidad@, contabilidad@, hse@) no se publican.
-- [ ] **Horario de oficina** para la página de Contacto y los mensajes de Manta fuera de horario.
-- [ ] **Dirección y ciudad sede**, si tienen una sede que puedan publicar.
-- [ ] **Plazo de respuesta a una cotización** (por ejemplo, "en menos de 24 horas hábiles"). Aparece en el formulario, en la página de Gracias, en el correo automático y en Manta.
-- [ ] **Lista completa de ciudades atendidas** para la página de Cobertura. Hoy figuran: Barranquilla, Puerto Colombia, Galapa, Cartagena, Santa Marta, Montería, Cereté, Valledupar, Chimichagua y Sincelejo.
+- NIT 901.865.320-2.
+- Plazo de respuesta: máximo 24 horas hábiles.
+- Horario de oficina: lunes a viernes de 8:00 a 16:00.
+- Emergencias: residencial, industrial y comercial, en baja y media tensión; en todo el país, con respuesta más rápida en los seis departamentos del Caribe.
+- Tres líneas nuevas: Telemedida, Calibración de equipos de medida, Suspensión y reconexión para comercializadores.
+- Alcance de Ingeniería y proyectos, Industrial, Transformadores, Pruebas, Sistemas de medición, Solar, Redes y Mantenimiento (incluidos equipos atendidos y modalidad por contrato).
+- Referencia normativa: Código de Medida, Resolución CREG 038.
+- Marcas de equipos: se mantiene la redacción general, sin marcas ni modelos.
+
+## Sigue pendiente
+
+### Gerencia
+
+- [ ] **Correo comercial único** para publicar (hoy figura comercial@mastertools.tech como propuesta).
+- [ ] **Dirección y ciudad sede**, si tienen una sede publicable.
+- [ ] **Lista completa de ciudades atendidas** para Cobertura. Hoy: Barranquilla, Puerto Colombia, Galapa, Cartagena, Santa Marta, Montería, Cereté, Valledupar, Chimichagua y Sincelejo.
 - [ ] **Redes sociales**: enlaces de LinkedIn, Instagram y Facebook, o confirmar cuáles usan.
-- [ ] **Correo para hojas de vida** ("¿Quiere trabajar con nosotros?") o quitar la línea.
+- [ ] **Correo para hojas de vida** o quitar la línea "¿Quiere trabajar con nosotros?".
+- [ ] **Quiénes editan el panel**: nombre y correo de cada persona, para invitarla.
 
-## Operaciones
+### Operaciones
 
-- [ ] **Emergencias**: quién recibe los avisos fuera del horario de oficina (número de WhatsApp del responsable).
-- [ ] **Emergencias**: qué tipos de falla atienden (media tensión, baja tensión industrial, residencial) y cuáles no, para la aclaración de la página.
-- [ ] **Emergencias**: en qué zonas atienden. Hoy figuran los seis departamentos del Caribe.
-- [ ] **Lista detallada de servicios ejecutados**, agrupada por las nueve líneas. Completa la sección "Qué incluye" de cada página y mejora la búsqueda en Google.
-- [ ] **Los cinco casos de Proyectos**: tipo de cliente, año, trabajos realizados, resultado y entre tres y seis fotos de cada uno. Confirmar si se puede nombrar al cliente.
-  - Cambio de comercializador Nivel II, Montería
-  - Normalización de telemedida, Cartagena
-  - Puesta en servicio de transformador, Barranquilla (potencia del equipo, pruebas realizadas)
-  - Certificación de sistema solar, Santa Marta (potencia del sistema, alcance)
-  - Emergencia en media tensión, Valledupar (qué falló, tiempo de restablecimiento)
+- [ ] **Emergencias fuera de horario**: a qué número de WhatsApp o correo llegan los avisos.
+- [ ] **Lista detallada de servicios ejecutados**, agrupada por las doce líneas.
+- [ ] **Los cinco casos de Proyectos**: tipo de cliente, año, trabajos realizados, resultado y entre tres y seis fotos de cada uno. Confirmar si se puede nombrar al cliente. En el documento nuevo sugirieron títulos más generales ("Cambio de comercializador Nivel I y II", "Medición de aislamiento, pruebas TTR y puesta en servicio de transformadores", "Atención de emergencia en media tensión a nivel Caribe"): confirmar si prefieren eso a los casos con ciudad.
 
-## Equipo técnico
+### Equipo técnico
 
-- [ ] **Medición Nivel II**: alcance exacto (instalación de medidores, transformadores de corriente y tensión, celdas o cajas), referencia normativa del Código de Medida, si la intervención requiere corte y cuánto dura, plazos habituales.
-- [ ] **Medición Nivel II**: alcance de "gestión de energía".
-- [ ] **Pruebas y diagnóstico**: validar la redacción de la pregunta frecuente sobre SFRA y si hacen mediciones con analizadores de red.
-- [ ] **Energía solar**: ¿el servicio incluye el diseño del sistema o solo el acompañamiento y la certificación?
-- [ ] **Mantenimiento**: qué equipos atienden (subestaciones, transformadores, celdas, tableros) y si ofrecen contratos de mantenimiento periódico o solo servicios puntuales.
-- [ ] **Ingeniería y proyectos / industrial**: confirmar si hacen diseño de instalaciones y gestión y supervisión de proyectos.
-- [ ] **Redes BT y MT**: confirmar normalización de redes y acometidas.
-- [ ] **Transformadores y subestaciones**: si incluyen montaje, traslado o mantenimiento de subestaciones.
-- [ ] **Instrumentación**: lista de equipos con marcas y modelos, si quieren mostrarlos (TTR, medidor de aislamiento, equipo de SFRA, analizadores de red).
+- [ ] **PFQ**: en el subtítulo de Inicio escribieron "pruebas de aislamiento (MEGGER) y PFQ". ¿Qué significa PFQ? Hasta aclararlo, el subtítulo menciona TTR y resistencia de aislamiento. "Megger" no se usa porque es una marca (regla del manual).
+- [ ] **Telemedida**: título e introducción de la página (en el documento dicen "Pte"); dejé una propuesta. Caso relacionado y preguntas frecuentes.
+- [ ] **Calibración de equipos de medida**: texto completo de la página; dejé una propuesta. Confirmar si el certificado lo emite un laboratorio acreditado o si Master Tools gestiona el proceso.
+- [ ] **Suspensión y reconexión**: texto completo de la página; dejé una propuesta. Confirmar si incluye registro fotográfico y reporte.
+- [ ] **Instrumentación**: la lista general de equipos para la página Nosotros (sin marcas).
 
-## Equipo y fotos
+### Equipo y fotos
 
-- [ ] **Equipo**: nombre, cargo y foto de cada integrante, si autorizan publicarlos. Alternativa: una foto grupal y una descripción del equipo.
-- [ ] **Fotos originales sin la marca de agua del GPS**, en especial las del 25 de junio (pruebas al transformador en Montería), las del 7 de junio (medidores en Montelíbano) y las del 20 de julio (analizador). Las del dron del 26 de octubre y las del 17 de septiembre ya sirven tal cual.
-- [ ] Dos o tres **fotos del equipo con el uniforme y el logo**, de frente, en campo, para Inicio y Nosotros.
+- [ ] **Equipo**: nombre, cargo y foto de cada integrante, si autorizan publicarlos. Alternativa: foto grupal y descripción.
+- [ ] **Fotos originales sin la marca de agua del GPS** y dos o tres fotos del equipo con uniforme y logo, de frente.
+- [ ] **Fotos propias para las tres líneas nuevas** (telemedida, calibración, suspensión y reconexión): hoy usan fotos del banco general.
 
 ## Decisiones ya tomadas (no hace falta responder)
 
@@ -54,3 +53,4 @@ a desarrollo.
 - No se promete "24/7" ni tiempos de atención: la emergencia se confirma en cada caso.
 - "Personal con matrícula profesional CONTE vigente", nunca "empresa certificada".
 - Manta no habla de capacitaciones ni de ensayos no destructivos.
+- El teléfono y el WhatsApp no se editan desde el panel: son constantes de marca.

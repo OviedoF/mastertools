@@ -171,7 +171,7 @@ export function Header({ services }: { services: NavService[] }) {
                       </div>
                       <div className="mt-2 flex items-center justify-between rounded-xl bg-niebla px-4 py-3">
                         <p className="text-sm text-noche/75">
-                          Nueve líneas de servicio, un solo equipo técnico.
+                          Doce líneas de servicio, un solo equipo técnico.
                         </p>
                         <Link
                           href="/servicios"

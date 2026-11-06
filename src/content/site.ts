@@ -59,7 +59,7 @@ export const site: SiteSettings = {
   url: "https://mastertools.tech",
   slogan: "Ingeniería que conecta, soluciones que transforman.",
   summary:
-    "Ingeniería eléctrica, sistemas de medida y atención de emergencias para empresas del Caribe colombiano.",
+    "Ingeniería eléctrica, sistemas de medida y atención de emergencias para empresas del Caribe colombiano y soluciones integrales a nivel nacional.",
   founded: 2024,
 
   phone: {
@@ -69,17 +69,18 @@ export const site: SiteSettings = {
   },
   /** Propuesta: el cliente debe confirmar el correo comercial único. */
   email: "comercial@mastertools.tech",
-  nit: "NIT [Completar]",
-  responseTime: "[Completar plazo]",
-  officeHours: "[Completar horario]",
+  nit: "NIT 901.865.320-2",
+  /** Confirmado por la empresa: máximo 24 horas, según la complejidad de la solicitud. */
+  responseTime: "en menos de 24 horas hábiles",
+  officeHours: "Lunes a viernes, 8:00 a 16:00",
   address: "[Completar dirección]",
   city: "[Completar ciudad sede]",
   careersEmail: "[Completar correo]",
   pending: {
-    nit: true,
+    nit: false,
     email: true,
-    responseTime: true,
-    officeHours: true,
+    responseTime: false,
+    officeHours: false,
     address: true,
     city: true,
     careersEmail: true,

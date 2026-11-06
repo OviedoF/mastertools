@@ -31,11 +31,11 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
-    default: "Master Tools | Ingeniería eléctrica integral en el Caribe",
+    default: "Master Tools | Ingeniería eléctrica integral en Colombia",
     template: "%s | Master Tools",
   },
   description:
-    "Proyectos, transformadores y subestaciones, pruebas TTR y SFRA, medida Nivel II y cambio de comercializador, energía solar, redes de baja y media tensión, mantenimiento y emergencias.",
+    "Proyectos, transformadores y subestaciones, pruebas TTR y SFRA, cambio de comercializador y medida Nivel I, II y III, telemedida, calibración, energía solar, redes de baja y media tensión, mantenimiento y emergencias. Base en el Caribe, alcance nacional.",
   applicationName: site.name,
   openGraph: {
     type: "website",

@@ -17,7 +17,7 @@ import { OpenMantaButton } from "@/components/chat/OpenMantaButton";
 export const metadata: Metadata = {
   title: "Emergencias eléctricas en el Caribe",
   description:
-    "Atención de fallas eléctricas en media tensión, transformadores y sistemas de medida en Barranquilla, Cartagena, Santa Marta, Montería, Valledupar y Sincelejo. Llame al +57 300 687 3112.",
+    "Atención de fallas eléctricas en baja y media tensión, transformadores y sistemas de medida en todo el país, con respuesta más rápida en Barranquilla, Cartagena, Santa Marta, Montería, Valledupar y Sincelejo. Llame al +57 300 687 3112.",
   alternates: { canonical: "/emergencias-electricas" },
   keywords: ["emergencia eléctrica Barranquilla", "falla eléctrica media tensión", "electricista industrial urgente"],
 };
@@ -141,7 +141,9 @@ export default async function EmergencyPage() {
                 Si el corte afecta a todo su barrio o sector, se trata de una
                 falla de la red pública: comuníquese con su operador de red.
                 Master Tools atiende fallas en las instalaciones eléctricas de
-                empresas, industrias y comercios. <Pending inline>validar alcance</Pending>
+                empresas, industrias y comercios, y también en residencias como
+                servicio al particular, por ejemplo cuando el operador de red no
+                responde.
               </p>
             </div>
             <h2 className="h2 mt-12 text-noche">Dónde</h2>
@@ -153,8 +155,9 @@ export default async function EmergencyPage() {
                 </li>
               ))}
             </ul>
-            <p className="mt-3 text-sm text-noche/60">
-              <Pending inline>validar zonas de atención de emergencias</Pending>
+            <p className="mt-3 max-w-md text-sm leading-relaxed text-noche/65">
+              Atendemos emergencias en todo el país, con tiempos de respuesta más
+              cortos en estos departamentos, donde está nuestra base.
             </p>
           </Reveal>
 

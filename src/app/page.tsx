@@ -13,11 +13,11 @@ import { site } from "@/content/site";
 import { getHome, getProcessSteps, getProjects, getServices, getSettings } from "@/data/content";
 
 export const metadata: Metadata = {
-  title: { absolute: "Master Tools | Ingeniería eléctrica integral en el Caribe" },
+  title: { absolute: "Master Tools | Ingeniería eléctrica integral en Colombia" },
   description:
-    "Proyectos, transformadores y subestaciones, pruebas TTR y SFRA, medida Nivel II y cambio de comercializador, energía solar, redes de baja y media tensión, mantenimiento y emergencias.",
+    "Proyectos, transformadores y subestaciones, pruebas TTR y SFRA, cambio de comercializador y medida Nivel I, II y III, telemedida, calibración, energía solar, redes de baja y media tensión, mantenimiento y emergencias. Base en el Caribe, alcance nacional.",
   alternates: { canonical: "/" },
-  keywords: ["ingeniería eléctrica Barranquilla", "empresa de servicios eléctricos Caribe"],
+  keywords: ["ingeniería eléctrica Barranquilla", "empresa de servicios eléctricos Caribe", "cambio de comercializador de energía Colombia"],
 };
 
 export default async function HomePage() {

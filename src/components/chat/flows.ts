@@ -43,11 +43,14 @@ export type Ctx = {
 };
 
 export const SERVICES_LABELS: Record<string, string> = {
-  medida: "Medición Nivel II o cambio de comercializador",
+  medida: "Sistemas de medición o cambio de comercializador",
   transformadores: "Transformadores, pruebas y diagnóstico",
   solar: "Energía solar",
   proyectos: "Ingeniería y proyectos",
   industrial: "Ingeniería industrial",
+  telemedida: "Telemedida",
+  calibracion: "Calibración de equipos de medida",
+  suspension: "Suspensión y reconexión para comercializadores",
   redes: "Redes BT y MT",
   mantenimiento: "Mantenimiento",
   otra: "Otra consulta",
@@ -123,6 +126,18 @@ const techQuestion: Record<string, { say: string; options: string[]; follow?: { 
     say: "¿Qué tipo de mantenimiento busca?",
     options: ["Preventivo", "Correctivo", "Plan periódico", "No estoy seguro"],
   },
+  telemedida: {
+    say: "¿Qué necesita?",
+    options: ["Recuperar datos de medida", "Equipos de comunicación", "Descarga manual de datos", "No estoy seguro"],
+  },
+  calibracion: {
+    say: "¿Qué equipos necesita calibrar?",
+    options: ["Transformadores de corriente (TC)", "Transformadores de tensión (TP/TV)", "Medidores", "Varios", "No estoy seguro"],
+  },
+  suspension: {
+    say: "¿Qué tipo de apoyo necesita?",
+    options: ["Suspensiones", "Reconexiones", "Ambas", "No estoy seguro"],
+  },
 };
 
 export const nodes: Record<string, Node> = {
@@ -132,7 +147,7 @@ export const nodes: Record<string, Node> = {
     say: "Hola, soy Manta, su aliado técnico en Master Tools. ¿En qué le puedo ayudar?",
     options: [
       { label: "Tengo una emergencia", next: "em1", tone: "emergency" },
-      { label: "Medición Nivel II o cambio de comercializador", value: "medida", next: "q_privacy" },
+      { label: "Medición o cambio de comercializador", value: "medida", next: "q_privacy" },
       { label: "Transformadores, pruebas y diagnóstico", value: "transformadores", next: "q_privacy" },
       { label: "Energía solar", value: "solar", next: "q_privacy" },
       { label: "Otro servicio", next: "other" },
@@ -147,6 +162,9 @@ export const nodes: Record<string, Node> = {
     options: [
       { label: "Ingeniería y proyectos", value: "proyectos", next: "q_privacy" },
       { label: "Ingeniería industrial", value: "industrial", next: "q_privacy" },
+      { label: "Telemedida", value: "telemedida", next: "q_privacy" },
+      { label: "Calibración de equipos de medida", value: "calibracion", next: "q_privacy" },
+      { label: "Suspensión y reconexión", value: "suspension", next: "q_privacy" },
       { label: "Redes BT y MT", value: "redes", next: "q_privacy" },
       { label: "Mantenimiento", value: "mantenimiento", next: "q_privacy" },
       { label: "Otra consulta", value: "otra", next: "q_privacy" },

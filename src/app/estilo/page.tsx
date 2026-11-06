@@ -101,7 +101,7 @@ export default function StylePage() {
           <div><p className="small text-noche/50">Texto · 16 / 17 px · Inter 400 · interlineado 1,6 · máx. 75 caracteres</p><p className="prose-mt">Normalizamos el sistema de medida para que la transición de comercializador se haga sin cortes y conforme a la norma.</p></div>
           <div><p className="small text-noche/50">Texto chico · 14 px · Inter 400</p><p className="small">Atención en Atlántico, Bolívar, Magdalena, Cesar, Córdoba y Sucre.</p></div>
           <div><p className="small text-noche/50">Cifra destacada · Montserrat 800</p><p className="font-display text-5xl font-extrabold tracking-tight text-profundo">+350</p></div>
-          <div><p className="small text-noche/50">Antetítulo</p><p className="eyebrow text-profundo">Nueve líneas de servicio</p></div>
+          <div><p className="small text-noche/50">Antetítulo</p><p className="eyebrow text-profundo">Doce líneas de servicio</p></div>
         </div>
       </Block>
 

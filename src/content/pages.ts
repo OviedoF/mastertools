@@ -4,10 +4,10 @@
  * del panel de edición.
  */
 export const homeContent = {
-  heroEyebrow: "Ingeniería eléctrica · Caribe colombiano",
-  heroTitle: "Ingeniería eléctrica, medida y emergencias para empresas del Caribe",
+  heroEyebrow: "Ingeniería eléctrica · Base en el Caribe, alcance nacional",
+  heroTitle: "Ingeniería eléctrica, sistemas de medición y emergencias para empresas a nivel nacional",
   heroSubtitle:
-    "Instalamos y normalizamos sistemas de medida Nivel II, probamos y ponemos en servicio transformadores y atendemos fallas eléctricas, con personal certificado y equipos calibrados.",
+    "Instalamos y normalizamos sistemas de medida Nivel I, II y III, hacemos pruebas TTR y de resistencia de aislamiento a transformadores de potencia y atendemos fallas eléctricas, con personal certificado y equipos calibrados.",
   heroPhoto: {
     src: "/fotos/hero-liniero-canasta.jpg",
     alt: "Técnico con casco y arnés trabajando desde un camión canasta sobre una red de distribución",
@@ -18,7 +18,7 @@ export const homeContent = {
 
   servicesTitle: "Un solo aliado para toda su infraestructura eléctrica",
   servicesText:
-    "Del proyecto a la puesta en servicio, de las pruebas al mantenimiento. Con un solo equipo técnico, su empresa no tiene que coordinar a varios contratistas.",
+    "Del proyecto a la puesta en servicio, de la medida al mantenimiento. Doce líneas de servicio con un solo equipo técnico: su empresa no tiene que coordinar a varios contratistas.",
   processTitle: "Así trabajamos en cada proyecto",
   processText:
     "Seis pasos, siempre los mismos. Así usted sabe qué esperar y nosotros podemos garantizar el resultado.",
@@ -27,10 +27,10 @@ export const homeContent = {
     "Trabajos ejecutados con ubicación y resultado verificable. La evidencia antes que los adjetivos.",
   coverageTitle: "Dónde trabajamos",
   coverageText:
-    "Con base en el Caribe, hemos trabajado en 12 departamentos del país. Nuestra meta es llegar a todo el territorio nacional.",
+    "Con base en el Caribe, hemos trabajado en 12 departamentos y atendemos en todo el país. Las emergencias tienen tiempos de respuesta más cortos en los departamentos de nuestra base.",
   emergencyTitle: "¿Tiene una falla eléctrica ahora?",
   emergencyText:
-    "Llámenos o escríbanos. Si hay riesgo para personas, aléjese del área y llame al 123. La atención se confirma en cada caso.",
+    "Llámenos o escríbanos. Si hay riesgo para personas, aléjese del área y llame al 123. Atendemos en baja y media tensión; la atención se confirma en cada caso.",
   closingTitle: "Hablemos de su proyecto",
   closingText: "Cuéntenos qué necesita y le respondemos con una propuesta técnica.",
 

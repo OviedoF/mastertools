@@ -11,7 +11,7 @@ import { breadcrumbJsonLd } from "@/lib/seo";
 export const metadata: Metadata = {
   title: "Servicios de ingeniería eléctrica",
   description:
-    "Ingeniería y proyectos, transformadores y subestaciones, pruebas y diagnóstico, medición y cambio de comercializador, energía solar, redes de baja y media tensión, mantenimiento y emergencias.",
+    "Ingeniería y proyectos, transformadores y subestaciones, pruebas y diagnóstico, sistemas de medición y cambio de comercializador, telemedida, calibración, energía solar, redes de baja y media tensión, mantenimiento y emergencias.",
   alternates: { canonical: "/servicios" },
   keywords: ["servicios de ingeniería eléctrica", "empresa de servicios eléctricos industriales"],
 };
@@ -29,7 +29,7 @@ export default async function ServicesIndexPage() {
       <PageHero
         crumbs={crumbs}
         title="Servicios de ingeniería eléctrica"
-        text="Nueve líneas de servicio, un solo equipo. Acompañamos a comercializadores de energía, operadores de red, industrias, comercios y proyectos de generación en todo el ciclo de su infraestructura eléctrica, bajo RETIE y NTC 2050 y con pautas internacionales IEEE."
+        text="Doce líneas de servicio, un solo equipo. Acompañamos a comercializadores de energía, operadores de red, industrias, comercios y proyectos de generación en todo el ciclo de su infraestructura eléctrica, bajo RETIE, NTC 2050 y el Código de Medida (CREG 038), con pautas internacionales IEEE y los reglamentos de cada operador de red."
       />
       <section className="bg-white py-16 md:py-20">
         <Reveal className="container-x grid gap-5 sm:grid-cols-2 lg:grid-cols-3" stagger={0.06} y={32}>
