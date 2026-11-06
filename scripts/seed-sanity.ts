@@ -68,7 +68,14 @@ async function main() {
     legalName: site.legalName,
     slogan: site.slogan,
     summary: site.summary,
-    // El correo, el NIT, el horario y la dirección quedan vacíos: los completa Master Tools.
+    // Lo confirmado por Master Tools se carga; lo pendiente queda vacío para que lo complete en el panel.
+    nit: site.pending.nit ? undefined : site.nit.replace(/^NIT\s*/i, ""),
+    responseTime: site.pending.responseTime ? undefined : site.responseTime,
+    officeHours: site.pending.officeHours ? undefined : site.officeHours,
+    email: site.pending.email ? undefined : site.email,
+    address: site.pending.address ? undefined : site.address,
+    city: site.pending.city ? undefined : site.city,
+    careersEmail: site.pending.careersEmail ? undefined : site.careersEmail,
     social: site.social.map((s, i) => ({ ...key(i), label: s.label, href: s.pending ? undefined : s.href })),
     emergencyDepartments: [...site.emergencyDepartments],
     allDepartments: [...site.allDepartments],
