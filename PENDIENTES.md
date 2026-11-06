@@ -14,6 +14,14 @@ Lo que ya respondieron está cargado en el sitio y en el panel de edición.
 - Alcance de Ingeniería y proyectos, Industrial, Transformadores, Pruebas, Sistemas de medición, Solar, Redes y Mantenimiento (incluidos equipos atendidos y modalidad por contrato).
 - Referencia normativa: Código de Medida, Resolución CREG 038.
 - Marcas de equipos: se mantiene la redacción general, sin marcas ni modelos.
+- "Ingeniería industrial" pasa a llamarse "Ingeniería eléctrica".
+- Las actividades reales de campo (inspección integral de medida directa, semidirecta e indirecta; cambio de medidores; revisión conjunta NT2 a NT4; mantenimiento preventivo de medida; sellos; atención de telemedida; instalación y retiro de equipos; atención técnica básica de emergencia) se sumaron a "Qué incluye" de cada línea, sin nombres de clientes ni valores.
+
+## Publicado a partir de las prefacturas: confirmar con Master Tools
+
+- [ ] **Municipios nuevos en Cobertura**: Soledad, Luruaco, Suan, Tolú, Corozal, Magangué, Ciénaga y Riohacha, tomados de los sitios donde hubo actuaciones en octubre. Confirmar que quieren publicarlos.
+- [ ] **Cifra de respaldo** en la página de Sistemas de medición: "más de 80 actuaciones de campo en un mes para una comercializadora del Caribe". No se nombra a la comercializadora ni a sus clientes. Confirmar que están de acuerdo en publicarla.
+- Los PDF de prefacturas no se publican ni se comparten: contienen clientes finales, precios y datos personales de un tercero.
 
 ## Sigue pendiente
 

@@ -21,6 +21,8 @@ const CITIES = [
   ["Barranquilla", -74.7964, 10.9639], ["Puerto Colombia", -74.9547, 10.9878], ["Galapa", -74.8869, 10.8978],
   ["Cartagena", -75.5144, 10.3910], ["Santa Marta", -74.1990, 11.2408], ["Montería", -75.8814, 8.7479],
   ["Cereté", -75.7906, 8.8853], ["Valledupar", -73.2532, 10.4631], ["Chimichagua", -73.8142, 9.2578], ["Sincelejo", -75.3978, 9.3047],
+  ["Soledad", -74.7675, 10.9184], ["Luruaco", -75.1431, 10.6103], ["Suan", -74.8808, 10.3339], ["Tolú", -75.5811, 9.5253],
+  ["Corozal", -75.2931, 9.3186], ["Magangué", -74.7544, 9.2417], ["Ciénaga", -74.2470, 11.0067], ["Riohacha", -72.9072, 11.5444],
 ];
 
 const mainland = geo.features.filter((f) => f.properties.DPTO_CCDGO !== "88");

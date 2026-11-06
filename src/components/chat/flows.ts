@@ -47,7 +47,7 @@ export const SERVICES_LABELS: Record<string, string> = {
   transformadores: "Transformadores, pruebas y diagnóstico",
   solar: "Energía solar",
   proyectos: "Ingeniería y proyectos",
-  industrial: "Ingeniería industrial",
+  industrial: "Ingeniería eléctrica",
   telemedida: "Telemedida",
   calibracion: "Calibración de equipos de medida",
   suspension: "Suspensión y reconexión para comercializadores",
@@ -161,7 +161,7 @@ export const nodes: Record<string, Node> = {
     field: "service",
     options: [
       { label: "Ingeniería y proyectos", value: "proyectos", next: "q_privacy" },
-      { label: "Ingeniería industrial", value: "industrial", next: "q_privacy" },
+      { label: "Ingeniería eléctrica", value: "industrial", next: "q_privacy" },
       { label: "Telemedida", value: "telemedida", next: "q_privacy" },
       { label: "Calibración de equipos de medida", value: "calibracion", next: "q_privacy" },
       { label: "Suspensión y reconexión", value: "suspension", next: "q_privacy" },

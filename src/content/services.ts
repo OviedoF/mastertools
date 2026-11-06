@@ -73,14 +73,14 @@ export const services: Service[] = [
   },
   {
     slug: "ingenieria-electrica-industrial",
-    title: "Ingeniería eléctrica industrial",
-    shortName: "Ingeniería industrial",
-    lineName: "ingeniería eléctrica industrial",
+    title: "Ingeniería eléctrica",
+    shortName: "Ingeniería eléctrica",
+    lineName: "ingeniería eléctrica",
     icon: "factory",
     cardText:
-      "Instalaciones, adecuaciones, suministro de equipos de potencia y soporte técnico para plantas e industrias.",
+      "Instalaciones, adecuaciones, suministro de equipos de potencia y soporte técnico para plantas, comercios y edificios.",
     intro:
-      "Instalaciones, adecuaciones, suministro de equipos y soporte técnico para plantas, industrias y grandes comercios, pensados para que la operación no se detenga.",
+      "Instalaciones, adecuaciones, suministro de equipos y soporte técnico para plantas industriales, comercios y edificios, pensados para que la operación no se detenga.",
     includes: [
       { text: "Instalaciones y adecuaciones eléctricas industriales." },
       { text: "Inspecciones técnicas y verificación de equipos." },
@@ -92,10 +92,10 @@ export const services: Service[] = [
       "Plantas industriales, centros logísticos, grandes comercios y edificios.",
     faqs: [],
     seo: {
-      title: "Ingeniería eléctrica industrial",
+      title: "Ingeniería eléctrica para industria y comercio",
       description:
-        "Instalaciones, adecuaciones, inspecciones, suministro de equipos de potencia y soporte técnico eléctrico para industrias y comercios en Colombia.",
-      keywords: ["ingeniería eléctrica industrial", "instalaciones eléctricas industriales Barranquilla", "tableros industriales"],
+        "Instalaciones, adecuaciones, inspecciones, suministro de equipos de potencia y soporte técnico eléctrico para industrias, comercios y edificios en Colombia.",
+      keywords: ["ingeniería eléctrica", "ingeniería eléctrica industrial", "instalaciones eléctricas industriales Barranquilla", "tableros industriales"],
     },
     photo: {
       src: "/fotos/celda-mt-terminales.jpg",
@@ -204,7 +204,7 @@ export const services: Service[] = [
     cardText:
       "Cambio de comercializador en Nivel I, II y III, normalización de fronteras comerciales, aumentos de nivel de tensión, unificación, independización y mitigación de cuentas.",
     intro:
-      "Si su empresa quiere cambiar de comercializador de energía, o necesita poner su medida en regla, nos encargamos de la instalación, la normalización y las pruebas del sistema de medida, en baja o media tensión.",
+      "Si su empresa quiere cambiar de comercializador de energía, o necesita poner su medida en regla, nos encargamos de la instalación, la normalización y las pruebas del sistema de medida, en baja o media tensión. Solo en un mes reciente ejecutamos más de 80 actuaciones de campo en sistemas de medida para una comercializadora del Caribe.",
     includes: [
       {
         text: "Instalación de sistemas de medida Nivel II: medidores, transformadores de corriente y de tensión, celdas o cajas de medida.",
@@ -213,6 +213,11 @@ export const services: Service[] = [
       { text: "Normalización de fronteras comerciales." },
       { text: "Adecuación del sistema de medida para el cambio de comercializador." },
       { text: "Aumentos de nivel de tensión, de Nivel I a Nivel II." },
+      { text: "Inspección integral del sistema de medida directa, semidirecta e indirecta." },
+      { text: "Revisión conjunta de medida indirecta en niveles de tensión 2, 3 y 4." },
+      { text: "Cambio de medidores de energía." },
+      { text: "Mantenimiento preventivo del sistema de medida." },
+      { text: "Retiro y reposición de sellos en medidores." },
       { text: "Instalación y verificación de bancos de compensación." },
       { text: "Implementación de sistemas de control." },
       {
@@ -265,6 +270,7 @@ export const services: Service[] = [
     intro:
       "Recuperamos y gestionamos la información de los sistemas de medida: comunicaciones, equipos y descarga de datos, para que su frontera comercial reporte sin interrupciones.",
     includes: [
+      { text: "Atención de telemedida en sitio: diagnóstico y restablecimiento de la comunicación del medidor." },
       { text: "Recuperación integral de datos de medida." },
       { text: "Suministro de equipos de comunicación: antenas, lazos, módems y fuentes de alimentación." },
       { text: "Descarga manual de datos por computador cuando no hay comunicación remota." },
@@ -335,6 +341,8 @@ export const services: Service[] = [
     includes: [
       { text: "Suspensión del servicio por orden del comercializador." },
       { text: "Reconexión del servicio." },
+      { text: "Visitas de instalación y de retiro de equipos de medida." },
+      { text: "Recogida y devolución de equipos desmontados." },
       { text: "Registro fotográfico y reporte de cada actuación.", pending: true },
     ],
     forWho: "Comercializadores de energía y operadores de red.",
@@ -474,6 +482,7 @@ export const services: Service[] = [
     includes: [
       { text: "Fallas en instalaciones de media tensión, transformadores, celdas y sistemas de medida." },
       { text: "Fallas eléctricas en industrias y comercios, en baja y media tensión." },
+      { text: "Atención técnica básica de emergencia para comercios, cadenas y oficinas." },
       { text: "Fallas en instalaciones residenciales, atendidas al particular cuando el operador de red no responde." },
     ],
     forWho: "Empresas, industrias, comercios y particulares, en baja y media tensión.",
