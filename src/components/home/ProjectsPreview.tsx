@@ -30,7 +30,7 @@ export function ProjectCard({ p }: { p: Project }) {
       <div className="flex flex-1 flex-col p-6">
         <p className="flex items-center gap-1.5 text-xs font-semibold tracking-wide text-noche/60 uppercase">
           <MapPin className="size-3.5 text-master" aria-hidden="true" />
-          {p.city}, {p.department}
+          {p.department}
         </p>
         <h3 className="h3 mt-2 text-noche group-hover:text-profundo">{p.title}</h3>
         <p className="mt-2 flex-1 text-[0.9375rem] leading-relaxed text-noche/70">{p.summary}</p>

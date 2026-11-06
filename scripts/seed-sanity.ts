@@ -117,7 +117,6 @@ async function main() {
       title: p.title,
       slug: slug(p.slug),
       order: i + 1,
-      city: p.city,
       department: p.department,
       service: { _type: "reference", _ref: `service-${p.serviceSlug}` },
       serviceLabel: p.serviceLabel,
@@ -129,7 +128,7 @@ async function main() {
       result: p.result,
       photo: await imageRef(p.photo.src, p.photo.alt),
       photoIllustrative: !!p.photoIllustrative,
-      gallery: [],
+      gallery: (await Promise.all((p.gallery ?? []).map((g) => imageRef(g.src, g.alt)))).filter(Boolean).map((img, j) => ({ ...key(j), ...img })),
       pending: p.pending,
     });
   }
@@ -195,7 +194,16 @@ async function main() {
     sections: legalContent.sections.map((s, i) => ({ ...key(i), ...s })),
   });
 
-  const tx = docs.reduce((t, d) => t.createOrReplace(d as never), client.transaction());
+  // Casos de la primera versión (con ciudad), reemplazados por los casos a nivel general.
+  const retiredProjects = [
+    "project-cambio-de-comercializador-nivel-ii-monteria",
+    "project-normalizacion-de-telemedida-cartagena",
+    "project-puesta-en-servicio-de-transformador-barranquilla",
+    "project-certificacion-ssfv-santa-marta",
+    "project-emergencia-en-media-tension-valledupar",
+  ];
+  let tx = docs.reduce((t, d) => t.createOrReplace(d as never), client.transaction());
+  tx = retiredProjects.reduce((t, id) => t.delete(id).delete(`drafts.${id}`), tx);
   await tx.commit();
   console.log(`Listo: ${docs.length} documentos.`);
 }

@@ -5,11 +5,11 @@ export const project = defineType({
   title: "Proyecto (caso)",
   type: "document",
   fields: [
-    defineField({ name: "title", title: "Título", type: "string", description: "Servicio + ciudad. Ejemplo: Cambio de comercializador Nivel II en Montería", validation: (r) => r.required() }),
+    defineField({ name: "title", title: "Título", type: "string", description: "Tipo de trabajo, a nivel general y sin ciudad ni cliente. Ejemplo: Cambio de comercializador en nivel de tensión 2", validation: (r) => r.required() }),
     defineField({ name: "slug", title: "Dirección (URL)", type: "slug", options: { source: "title" }, validation: (r) => r.required() }),
     defineField({ name: "order", title: "Orden", type: "number" }),
-    defineField({ name: "city", title: "Ciudad", type: "string", validation: (r) => r.required() }),
-    defineField({ name: "department", title: "Departamento", type: "string", validation: (r) => r.required() }),
+    defineField({ name: "department", title: "Zona", type: "string", description: "Departamento o región. Es lo único que se publica sobre el lugar.", validation: (r) => r.required() }),
+    defineField({ name: "city", title: "Ciudad (nota interna, no se publica)", type: "string" }),
     defineField({ name: "service", title: "Servicio", type: "reference", to: [{ type: "service" }] }),
     defineField({
       name: "serviceLabel",
@@ -46,5 +46,5 @@ export const project = defineType({
     defineField({ name: "pending", title: "Datos por completar (notas internas)", type: "array", of: [{ type: "string" }] }),
   ],
   orderings: [{ title: "Orden", name: "order", by: [{ field: "order", direction: "asc" }] }],
-  preview: { select: { title: "title", subtitle: "city", media: "photo" } },
+  preview: { select: { title: "title", subtitle: "department", media: "photo" } },
 });

@@ -21,7 +21,7 @@ export const servicesQuery = defineQuery(`*[_type == "service"] | order(order as
 }`);
 
 export const projectsQuery = defineQuery(`*[_type == "project"] | order(order asc, year desc){
-  _id, title, "slug": slug.current, city, department,
+  _id, title, "slug": slug.current, department,
   "serviceSlug": service->slug.current, serviceLabel, clientType, year,
   summary, challenge, work, result,
   ${photo}, photoIllustrative,

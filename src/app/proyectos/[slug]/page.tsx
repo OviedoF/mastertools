@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!p) return {};
   return {
     title: p.title,
-    description: `${p.summary} ${p.city}, ${p.department}.`,
+    description: `${p.summary} ${p.department}.`,
     alternates: { canonical: `/proyectos/${p.slug}` },
     openGraph: { images: [{ url: p.photo.src, alt: p.photo.alt }] },
   };
@@ -62,7 +62,7 @@ export default async function ProjectPage({ params }: Props) {
             <span className="chip chip-claro">{p.serviceLabel}</span>
             <span className="flex items-center gap-1.5 text-white/80">
               <MapPin className="size-4 text-master" aria-hidden="true" />
-              {p.city}, {p.department}
+              {p.department}
             </span>
             {p.year ? <span className="text-white/70">{p.year}</span> : <Pending inline className="border-white/30 bg-white/10 text-white/70">año</Pending>}
           </div>
@@ -116,7 +116,7 @@ export default async function ProjectPage({ params }: Props) {
             <div className="card p-6">
               <h2 className="h3 text-noche">Datos rápidos</h2>
               <dl className="mt-4 grid gap-3 text-sm">
-                <div className="flex justify-between gap-4"><dt className="text-noche/60">Ciudad</dt><dd className="font-medium">{p.city}</dd></div>
+                <div className="flex justify-between gap-4"><dt className="text-noche/60">Zona</dt><dd className="font-medium">{p.department}</dd></div>
                 <div className="flex justify-between gap-4"><dt className="text-noche/60">Servicio</dt><dd className="font-medium">{service?.shortName ?? p.serviceLabel}</dd></div>
                 <div className="flex justify-between gap-4"><dt className="text-noche/60">Tipo de cliente</dt><dd>{p.clientType ?? <Pending inline>completar</Pending>}</dd></div>
                 <div className="flex justify-between gap-4"><dt className="text-noche/60">Año</dt><dd>{p.year ?? <Pending inline>completar</Pending>}</dd></div>

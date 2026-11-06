@@ -125,8 +125,8 @@ export const services: Service[] = [
     forWho:
       "Industrias, constructoras, proyectos de generación y empresas con subestación propia.",
     caseStudy: {
-      place: "Barranquilla, Atlántico",
-      text: "Energización y validación operativa de un transformador de potencia.",
+      place: "Caribe colombiano",
+      text: "Mantenimiento, pruebas y conmutación de TAP en transformadores de distribución.",
     },
     faqs: [
       {
@@ -229,8 +229,8 @@ export const services: Service[] = [
     forWho:
       "Industrias, comercios, edificios y usuarios conectados en baja o media tensión; comercializadoras y operadores de red que necesitan apoyo técnico en campo.",
     caseStudy: {
-      place: "Montería, Córdoba",
-      text: "Adecuación del sistema de medida para la transición de comercializador.",
+      place: "Córdoba",
+      text: "Cambio de comercializador en nivel de tensión 2: montaje de la medida indirecta y puesta en servicio.",
     },
     faqs: [
       {
@@ -253,8 +253,8 @@ export const services: Service[] = [
       keywords: ["cambio de comercializador de energía", "medida nivel II", "normalización de medida", "frontera comercial"],
     },
     photo: {
-      src: "/fotos/celda-medida-13200.jpg",
-      alt: "Celda de medida de 13,2 kV con sus conexiones identificadas",
+      src: "/fotos/casos/normalizacion-medida-nt2-1.jpg",
+      alt: "Transformadores de medida instalados en una estructura de media tensión",
     },
     featured: true,
     whatsapp: waMessages.medida,
@@ -285,8 +285,8 @@ export const services: Service[] = [
       keywords: ["telemedida energía", "recuperación de datos de medidores", "comunicaciones de medidores"],
     },
     photo: {
-      src: "/fotos/medidor-trifasico.jpg",
-      alt: "Medidor trifásico tetrafilar instalado en un sistema de medida",
+      src: "/fotos/casos/telemedida-planta-solar-1.jpg",
+      alt: "Medidores con módulo de comunicación en un gabinete de medida",
     },
     whatsapp: waMessages.service("telemedida"),
     pendingNotes: [
@@ -383,8 +383,8 @@ export const services: Service[] = [
     forWho:
       "Empresas instaladoras que necesitan certificar sus proyectos, y empresas o comercios que tienen o van a instalar un sistema solar.",
     caseStudy: {
-      place: "Santa Marta, Magdalena",
-      text: "Cumplimiento técnico para la certificación de un sistema fotovoltaico.",
+      place: "Córdoba",
+      text: "Puesta en servicio y acompañamiento en la certificación CIDET de un sistema fotovoltaico.",
     },
     faqs: [
       {
@@ -488,8 +488,8 @@ export const services: Service[] = [
     forWho: "Empresas, industrias, comercios y particulares, en baja y media tensión.",
     norms: NORMS_DEFAULT,
     caseStudy: {
-      place: "Valledupar, Cesar",
-      text: "Atención de una emergencia en media tensión y restablecimiento del servicio.",
+      place: "Atlántico",
+      text: "Emergencia por puente primario y daño en DPS en una estructura de media tensión.",
     },
     faqs: [],
     seo: {

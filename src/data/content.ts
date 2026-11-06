@@ -162,7 +162,6 @@ function mapProject(d: Row): Project {
   return {
     slug: str(d.slug),
     title: str(d.title, base?.title ?? ""),
-    city: str(d.city, base?.city ?? ""),
     department: str(d.department, base?.department ?? ""),
     serviceSlug: str(d.serviceSlug, base?.serviceSlug ?? ""),
     serviceLabel: str(d.serviceLabel, base?.serviceLabel ?? ""),
@@ -176,7 +175,7 @@ function mapProject(d: Row): Project {
     photoIllustrative: !!d.photoIllustrative,
     gallery: Array.isArray(d.gallery)
       ? d.gallery.filter((g: Row) => g?.asset).map((g: Row) => photoFrom(g as SanityPhoto, { src: "", alt: "" }, 1600))
-      : [],
+      : base?.gallery ?? [],
     pending: list(d.pending, base?.pending ?? []),
   };
 }

@@ -24,7 +24,7 @@ export const homeContent = {
     "Seis pasos, siempre los mismos. Así usted sabe qué esperar y nosotros podemos garantizar el resultado.",
   projectsTitle: "Proyectos recientes",
   projectsText:
-    "Trabajos ejecutados con ubicación y resultado verificable. La evidencia antes que los adjetivos.",
+    "Trabajos ejecutados por nuestro equipo, con fotos propias de cada intervención. La evidencia antes que los adjetivos.",
   coverageTitle: "Dónde trabajamos",
   coverageText:
     "Con base en el Caribe, hemos trabajado en 12 departamentos y atendemos en todo el país. Las emergencias tienen tiempos de respuesta más cortos en los departamentos de nuestra base.",
