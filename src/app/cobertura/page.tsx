@@ -25,6 +25,9 @@ const crumbs = [
   { name: "Cobertura", href: "/cobertura" },
 ];
 
+const NUMBERS = ["", "Un", "Dos", "Tres", "Cuatro", "Cinco", "Seis", "Siete", "Ocho", "Nueve", "Diez", "Once", "Doce", "Trece", "Catorce", "Quince", "Dieciséis", "Diecisiete", "Dieciocho", "Diecinueve", "Veinte"];
+const inWords = (n: number) => NUMBERS[n] ?? String(n);
+
 export default async function CoveragePage() {
   const site = await getSettings();
   const caribe = site.emergencyDepartments;
@@ -94,16 +97,16 @@ export default async function CoveragePage() {
         <div className="container-x grid items-center gap-12 lg:grid-cols-[1fr_1.1fr]">
           <Reveal>
             <p className="eyebrow text-master">Mapa de cobertura</p>
-            <h2 className="h2 mt-3 text-white">Doce departamentos, una sola base</h2>
+            <h2 className="h2 mt-3 text-white">{inWords(site.allDepartments.length)} departamentos, una sola base</h2>
             <p className="lead mt-4 text-white/75">
               Pase el cursor por el mapa para ver cada departamento. En celeste,
               la base en el Caribe donde atendemos emergencias. En azul, los
               departamentos donde ya ejecutamos trabajos.
             </p>
-            <ul className="mt-6 grid gap-2 text-[0.9375rem] text-white/85">
+            <ul className="mt-6 grid grid-cols-2 gap-x-6 gap-y-1.5 text-[0.9375rem] text-white/85 sm:grid-cols-3">
               {site.cities.map((c) => (
                 <li key={c} className="flex items-center gap-2">
-                  <span className="size-2 rounded-full bg-alerta" aria-hidden="true" />
+                  <span className="size-2 shrink-0 rounded-full bg-alerta" aria-hidden="true" />
                   {c}
                 </li>
               ))}

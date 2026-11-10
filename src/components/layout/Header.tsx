@@ -97,7 +97,7 @@ export function Header({ services }: { services: NavService[] }) {
             : "shadow-[0_1px_0_rgb(11_31_77/0.08)]",
         )}
       >
-        <div className="container-x flex h-[68px] items-center justify-between gap-4 md:h-20">
+        <div className="container-x relative flex h-[68px] items-center justify-between gap-4 md:h-20">
           <Logo width={160} className="md:w-[200px]" priority />
 
           {/* Navegación de escritorio */}
@@ -107,7 +107,6 @@ export function Header({ services }: { services: NavService[] }) {
                 <div
                   key={item.href}
                   ref={servicesRef}
-                  className="relative"
                   onMouseEnter={hoverOpen}
                   onMouseLeave={hoverClose}
                 >
@@ -130,14 +129,14 @@ export function Header({ services }: { services: NavService[] }) {
                   <div
                     id={servicesId}
                     className={clsx(
-                      "absolute top-full left-1/2 w-[min(880px,calc(100vw-2rem))] -translate-x-1/2 pt-3 transition-[opacity,transform] duration-200 ease-(--ease-out-expo)",
+                      "absolute top-full left-1/2 w-[min(1080px,calc(100vw-2rem))] -translate-x-1/2 pt-3 transition-[opacity,transform] duration-200 ease-(--ease-out-expo)",
                       servicesOpen
                         ? "visible translate-y-0 opacity-100"
                         : "invisible -translate-y-1 opacity-0",
                     )}
                   >
-                    <div className="card overflow-hidden p-2">
-                      <div className="grid grid-cols-3 gap-1">
+                    <div className="card max-h-[calc(100vh-7.5rem)] overflow-y-auto p-2">
+                      <div className="grid grid-cols-3 gap-1 xl:grid-cols-4">
                         {services.map((s) => {
                           const emergency = s.slug === "emergencias";
                           return (
@@ -145,7 +144,7 @@ export function Header({ services }: { services: NavService[] }) {
                               key={s.slug}
                               href={s.href}
                               className={clsx(
-                                "group flex items-start gap-3 rounded-xl p-3 transition-colors",
+                                "group flex items-start gap-3 rounded-xl p-2.5 transition-colors",
                                 emergency ? "hover:bg-alerta/15" : "hover:bg-claro/50",
                               )}
                             >
@@ -161,7 +160,7 @@ export function Header({ services }: { services: NavService[] }) {
                                 <span className="block font-display text-[0.9375rem] font-semibold text-noche group-hover:text-profundo">
                                   {s.shortName}
                                 </span>
-                                <span className="mt-0.5 block text-[0.8125rem] leading-snug text-noche/65">
+                                <span className="mt-0.5 line-clamp-2 text-[0.8125rem] leading-snug text-noche/65">
                                   {s.cardText}
                                 </span>
                               </span>

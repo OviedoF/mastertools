@@ -8,7 +8,7 @@ import { Orbit } from "@/components/ui/Orbit";
  * Portada de Inicio (bloque 1). La entrada se anima con CSS para que el
  * texto esté visible antes de que cargue JavaScript.
  */
-export function Hero({ home }: { home: HomeContent }) {
+export function Hero({ home, departments }: { home: HomeContent; departments: number }) {
   return (
     <section className="relative overflow-hidden bg-white">
       <Orbit
@@ -83,7 +83,7 @@ export function Hero({ home }: { home: HomeContent }) {
           </div>
           <div className="absolute -top-5 -right-3 hidden rounded-2xl bg-noche px-5 py-4 text-white shadow-card-hover sm:block md:-right-6">
             <p className="font-display text-3xl font-extrabold leading-none text-master">+350</p>
-            <p className="mt-1 text-xs text-white/80">intervenciones en 12 departamentos</p>
+            <p className="mt-1 text-xs text-white/80">intervenciones en {departments} departamentos</p>
           </div>
         </div>
       </div>

@@ -46,7 +46,7 @@ export const SERVICES_LABELS: Record<string, string> = {
   medida: "Sistemas de medición o cambio de comercializador",
   transformadores: "Transformadores, pruebas y diagnóstico",
   solar: "Energía solar",
-  proyectos: "Ingeniería y proyectos",
+  proyectos: "Consultoría y proyectos",
   industrial: "Ingeniería eléctrica",
   telemedida: "Telemedida",
   calibracion: "Calibración de equipos de medida",
@@ -77,6 +77,18 @@ export const EMERGENCY_KEYWORDS = [
   "cable caído",
   "cable caido",
   "cable en el piso",
+  // Expresiones habituales en la región
+  "se fue la luz",
+  "sin fluido",
+  "apagón",
+  "apagon",
+  "echando chispas",
+  "reventó",
+  "revento",
+  "quemado",
+  "quemándose",
+  "quemandose",
+  "sin servicio",
 ];
 
 export function detectEmergency(text: string) {
@@ -84,8 +96,43 @@ export function detectEmergency(text: string) {
   return EMERGENCY_KEYWORDS.some((k) => t.includes(k));
 }
 
+/** Pide hablar con una persona (documento de estructura, 6.4). */
+export function detectHuman(text: string) {
+  return /hablar con (una persona|alguien|un asesor|un humano|un ingeniero)|persona real|no (quiero|me gusta) (hablar con )?(un )?(bot|robot)/i.test(text);
+}
+
+/** Pregunta por precios (documento de estructura, 6.4). */
+export function detectPrice(text: string) {
+  return /precio|cu[aá]nto (cuesta|vale|sale|cobran)|tarifa|presupuesto/i.test(text);
+}
+
+/**
+ * Horario de oficina del equipo comercial: lunes a viernes de 8:00 a 16:00,
+ * hora de Colombia. Fuera de ese horario Manta aclara que la solicitud queda
+ * registrada y se contacta el próximo día hábil (documento de estructura, 6.4).
+ */
+export function isOfficeHours(date = new Date()) {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/Bogota",
+    weekday: "short",
+    hour: "numeric",
+    hour12: false,
+  }).formatToParts(date);
+  const weekday = parts.find((p) => p.type === "weekday")?.value ?? "";
+  const hour = Number(parts.find((p) => p.type === "hour")?.value ?? "0") % 24;
+  const laborable = !["Sat", "Sun"].includes(weekday);
+  return laborable && hour >= 8 && hour < 16;
+}
+
+const OUT_OF_HOURS_QUOTE =
+  " Nuestro equipo comercial atiende de lunes a viernes de 8:00 a 16:00: su solicitud queda registrada y lo contactamos el próximo día hábil.";
+const OUT_OF_HOURS_EMERGENCY =
+  " Fuera del horario de oficina el reporte se recibe igual: el equipo lo contacta para confirmar si puede atender.";
+
+/** Capitales de la base en el Caribe; el resto de ciudades entra por "Otra ciudad". */
+const MAIN_CITIES = ["Barranquilla", "Cartagena", "Santa Marta", "Valledupar", "Montería", "Sincelejo"];
 const cityOptions = (next: string): Option[] => [
-  ...site.cities.slice(0, 6).map((c) => ({ label: c, value: c, next })),
+  ...MAIN_CITIES.filter((c) => site.cities.includes(c)).map((c) => ({ label: c, value: c, next })),
   { label: "Otra ciudad", value: "__otra__", next: `${next}_otra` },
 ];
 
@@ -160,7 +207,7 @@ export const nodes: Record<string, Node> = {
     say: "Claro. ¿Cuál de estos?",
     field: "service",
     options: [
-      { label: "Ingeniería y proyectos", value: "proyectos", next: "q_privacy" },
+      { label: "Consultoría y proyectos", value: "proyectos", next: "q_privacy" },
       { label: "Ingeniería eléctrica", value: "industrial", next: "q_privacy" },
       { label: "Telemedida", value: "telemedida", next: "q_privacy" },
       { label: "Calibración de equipos de medida", value: "calibracion", next: "q_privacy" },
@@ -207,11 +254,31 @@ export const nodes: Record<string, Node> = {
     say: "¿Qué está pasando?",
     field: "falla",
     options: [
-      { label: "Sin servicio", value: "Sin servicio", next: "em4" },
+      { label: "Sin servicio", value: "Sin servicio", next: "em3_alcance" },
       { label: "Chispas o humo", value: "Chispas o humo", next: "em4" },
       { label: "Falla de transformador", value: "Falla de transformador", next: "em4" },
       { label: "Problema con el medidor", value: "Problema con el medidor", next: "em4" },
       { label: "Otro", value: "Otro", next: "em3_otro" },
+    ],
+  },
+  em3_alcance: {
+    id: "em3_alcance",
+    mood: "serio",
+    say: "¿El corte afecta solo a su instalación o a todo el barrio o sector?",
+    field: "alcance",
+    options: [
+      { label: "Solo a mi instalación", value: "Solo la instalación", next: "em4" },
+      { label: "A todo el barrio o sector", value: "Todo el sector", next: "em3_sector" },
+      { label: "No estoy seguro", value: "No está seguro", next: "em4" },
+    ],
+  },
+  em3_sector: {
+    id: "em3_sector",
+    mood: "pensativo",
+    say: "Si el corte afecta a todo su sector, es una falla de la red pública y debe reportarla a su operador de red. Si la falla está solo en su instalación, podemos ayudarle.",
+    options: [
+      { label: "Es solo en mi instalación, continuar", next: "em4" },
+      { label: "Entendido, gracias", next: "bye" },
     ],
   },
   em3_otro: {
@@ -246,7 +313,8 @@ export const nodes: Record<string, Node> = {
     id: "em6",
     mood: "contento",
     submit: "emergency",
-    say: `Listo. Ya le pasé su reporte al equipo y lo van a llamar a ese número para confirmar la atención. Si prefiere no esperar, llame ahora al ${site.phone.display}.`,
+    say: () =>
+      `Listo. Ya le pasé su reporte al equipo y lo van a llamar a ese número para confirmar la atención.${isOfficeHours() ? "" : OUT_OF_HOURS_EMERGENCY} Si prefiere no esperar, llame ahora al ${site.phone.display}.`,
     options: [
       { label: "Llamar ahora", href: telHref, tone: "emergency" },
       { label: "Escribir por WhatsApp", href: waEmergencyHref },
@@ -348,7 +416,7 @@ export const nodes: Record<string, Node> = {
     mood: "contento",
     submit: "quote",
     say: (ctx) =>
-      `Gracias, ${firstName(ctx.answers.nombre)}. Ya registré su solicitud y un ingeniero se comunicará con usted ${site.responseTime}. ¿Hay algo más que quiera agregar?`,
+      `Gracias, ${firstName(ctx.answers.nombre)}. Ya registré su solicitud y un ingeniero se comunicará con usted ${site.responseTime}.${isOfficeHours() ? "" : OUT_OF_HOURS_QUOTE} ¿Hay algo más que quiera agregar?`,
     field: "extra",
     input: "text",
     placeholder: "Algo más que debamos saber (opcional)",

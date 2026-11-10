@@ -1,3 +1,5 @@
+import { site } from "./site";
+
 /**
  * Textos de Inicio, Nosotros y la política de datos. Fuente: documento de
  * estructura v1.2. Son el respaldo cuando no hay CMS y la semilla inicial
@@ -27,7 +29,7 @@ export const homeContent = {
     "Trabajos ejecutados por nuestro equipo, con fotos propias de cada intervención. La evidencia antes que los adjetivos.",
   coverageTitle: "Dónde trabajamos",
   coverageText:
-    "Con base en el Caribe, hemos trabajado en 12 departamentos y atendemos en todo el país. Las emergencias tienen tiempos de respuesta más cortos en los departamentos de nuestra base.",
+    "Con base en el Caribe, hemos trabajado en trece departamentos y atendemos en todo el país. Las emergencias tienen tiempos de respuesta más cortos en los departamentos de nuestra base.",
   emergencyTitle: "¿Tiene una falla eléctrica ahora?",
   emergencyText:
     "Llámenos o escríbanos. Si hay riesgo para personas, aléjese del área y llame al 123. Atendemos en baja y media tensión; la atención se confirma en cada caso.",
@@ -92,7 +94,7 @@ export const legalContent = {
   sections: [
     {
       heading: "1. Responsable del tratamiento",
-      body: "Master Tools & Services S.A.S., con NIT [Completar], domicilio [Completar] y correo [Completar]. Teléfono: +57 300 687 3112.",
+      body: `${site.legalName}, ${site.nit}, domicilio [Completar] y correo [Completar]. Teléfono: ${site.phone.display}.`,
     },
     {
       heading: "2. Finalidades",

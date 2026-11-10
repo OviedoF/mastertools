@@ -11,7 +11,7 @@ import { breadcrumbJsonLd } from "@/lib/seo";
 export const metadata: Metadata = {
   title: "Servicios de ingeniería eléctrica",
   description:
-    "Ingeniería y proyectos, transformadores y subestaciones, pruebas y diagnóstico, sistemas de medición y cambio de comercializador, telemedida, calibración, energía solar, redes de baja y media tensión, mantenimiento y emergencias.",
+    "Consultoría y proyectos, transformadores y subestaciones, pruebas y diagnóstico, sistemas de medición y cambio de comercializador, telemedida, calibración, energía solar, redes de baja y media tensión, mantenimiento y emergencias.",
   alternates: { canonical: "/servicios" },
   keywords: ["servicios de ingeniería eléctrica", "empresa de servicios eléctricos industriales"],
 };

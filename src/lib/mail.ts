@@ -2,9 +2,11 @@ import "server-only";
 import nodemailer, { type Transporter } from "nodemailer";
 
 /**
- * Envío de correo por Gmail. Intenta primero la API de Gmail (OAuth2, con
- * OAUTH_*); si falla o no está configurada, SMTP con contraseña de
- * aplicación (MAIL_PASSWORD). Sin credenciales, no envía y lo informa.
+ * Envío de correo. Con MAIL_HOST se usa cualquier servidor SMTP (por ejemplo
+ * Zoho: smtp.zoho.com, puerto 465) con MAIL_USERNAME y MAIL_PASSWORD. Sin
+ * MAIL_HOST se asume Gmail: primero la API (OAuth2, con OAUTH_*) y, si falla
+ * o no está configurada, SMTP con contraseña de aplicación (MAIL_PASSWORD).
+ * Sin credenciales, no envía y lo informa.
  */
 type Candidate = { name: "oauth2" | "smtp"; transporter: Transporter };
 let candidates: Candidate[] | undefined;
@@ -31,12 +33,20 @@ function buildCandidates(): Candidate[] {
       });
     }
     if (MAIL_PASSWORD) {
+      const pass = MAIL_PASSWORD.replace(/^["']|["']$/g, "");
+      const host = process.env.MAIL_HOST?.trim();
+      const port = Number(process.env.MAIL_PORT) || 465;
       list.push({
         name: "smtp",
-        transporter: nodemailer.createTransport({
-          service: "gmail",
-          auth: { user, pass: MAIL_PASSWORD.replace(/^["']|["']$/g, "") },
-        }),
+        transporter: host
+          ? nodemailer.createTransport({
+              host,
+              port,
+              // 465 es SSL directo; 587 negocia STARTTLS. MAIL_SECURE fuerza uno u otro.
+              secure: process.env.MAIL_SECURE ? process.env.MAIL_SECURE === "true" : port === 465,
+              auth: { user, pass },
+            })
+          : nodemailer.createTransport({ service: "gmail", auth: { user, pass } }),
       });
     }
   }

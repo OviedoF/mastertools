@@ -201,6 +201,7 @@ async function main() {
     "project-puesta-en-servicio-de-transformador-barranquilla",
     "project-certificacion-ssfv-santa-marta",
     "project-emergencia-en-media-tension-valledupar",
+    "project-transformadores-mantenimiento-pruebas-y-tap",
   ];
   let tx = docs.reduce((t, d) => t.createOrReplace(d as never), client.transaction());
   tx = retiredProjects.reduce((t, id) => t.delete(id).delete(`drafts.${id}`), tx);

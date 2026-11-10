@@ -40,7 +40,7 @@ export default async function HomePage() {
           publisher: { "@id": `${site.url}/#organization` },
         }}
       />
-      <Hero home={home} />
+      <Hero home={home} departments={settings.allDepartments.length} />
       <Stats stats={settings.stats} />
       <ServicesGrid services={services} title={home.servicesTitle} text={home.servicesText} />
       <FeaturedService home={home} />

@@ -9,6 +9,8 @@ import { SendHorizontal, X } from "lucide-react";
 import { site } from "@/content/site";
 import {
   detectEmergency,
+  detectHuman,
+  detectPrice,
   nodes,
   PRIVACY_NOTICE,
   type Ctx,
@@ -194,8 +196,12 @@ export function MantaBubble() {
       goTo("em1", next);
       return;
     }
-    if (/precio|cu[aá]nto (cuesta|vale|sale)|tarifa/i.test(text) && !node.input) {
+    if (!node.input && detectPrice(text)) {
       goTo("price", next);
+      return;
+    }
+    if (!node.input && detectHuman(text)) {
+      goTo("human", next);
       return;
     }
     const nextId = node.next ? resolve(node.next, { answers: next, service: next.service }) : undefined;

@@ -1,8 +1,9 @@
 # Master Tools · datos pendientes para cerrar la web
 
-Actualizado el 6 de noviembre de 2026 con las observaciones de Master Tools
-sobre el documento de estructura (versión con doce líneas de servicio) y con
-las fotos y correcciones que enviaron por WhatsApp ese mismo día.
+Actualizado el 10 de noviembre de 2026. Recoge las observaciones de Master
+Tools sobre el documento de estructura (versión con doce líneas de servicio),
+las fotos y correcciones que enviaron por WhatsApp el 6 de noviembre y una
+revisión completa del documento contra el sitio, bloque por bloque.
 Lo que ya respondieron está cargado en el sitio y en el panel de edición.
 
 ## Resuelto con el documento nuevo
@@ -20,10 +21,12 @@ Lo que ya respondieron está cargado en el sitio y en el panel de edición.
 - Las fotos se publican con autorización expresa ("son fotos de nosotros, las puedes subir sin inconvenientes"). Se recortó la franja del GPS (mapa, coordenadas, dirección y fecha), se quitaron los metadatos y no se usaron las fotos donde se ve el nombre de un cliente, un local o una etiqueta del operador de red.
 - Telemedida y Sistemas de medición usan ahora fotos propias (planta solar con medidores comunicados; transformadores de medida en estructura).
 - Las actividades reales de campo (inspección integral de medida directa, semidirecta e indirecta; cambio de medidores; revisión conjunta NT2 a NT4; mantenimiento preventivo de medida; sellos; atención de telemedida; instalación y retiro de equipos; atención técnica básica de emergencia) se sumaron a "Qué incluye" de cada línea, sin nombres de clientes ni valores.
+- Observaciones de Master Tools del 10 de noviembre: el desplegable de Servicios quedó más compacto (cuatro columnas en pantallas anchas, descripciones de dos líneas y desplazamiento propio si la pantalla es baja) y la descripción de Transformadores ya no dice "con pruebas antes y después de energizar"; la línea "Ingeniería, consultoría y gestión de proyectos" pasó a llamarse "Consultoría y gestión de proyectos" (en menú y tarjetas, "Consultoría y proyectos") para no confundirla con Ingeniería eléctrica; Cobertura incorpora Huila (trece departamentos) y los municipios de la lista que enviaron.
+- Revisión del documento completo contra el sitio (10 de noviembre): las diecinueve páginas, los elementos comunes, el formulario, los mensajes de WhatsApp, la página de Gracias, el correo de confirmación, la página de Emergencias y el guion de Manta coinciden con el documento y con las observaciones de Master Tools. Se corrigió lo que faltaba: Manta avisa fuera del horario de oficina (lunes a viernes de 8:00 a 16:00) que la solicitud queda registrada y se contacta el próximo día hábil; cuando alguien reporta "sin servicio" pregunta si el corte es de todo el sector y, si es así, lo remite al operador de red; reconoce expresiones de la región ("se fue la luz", "apagón", "echando chispas") y la petición de hablar con una persona; los tres proyectos de Inicio son los que pide el documento (medida, transformadores y emergencia en media tensión); la política de datos ya trae el NIT.
 
 ## Publicado a partir de las prefacturas: confirmar con Master Tools
 
-- [ ] **Municipios nuevos en Cobertura**: Soledad, Luruaco, Suan, Tolú, Corozal, Magangué, Ciénaga y Riohacha, tomados de los sitios donde hubo actuaciones en octubre. Confirmar que quieren publicarlos.
+- [ ] **Municipios que no están en la lista que enviaron**: Galapa, Chimichagua (documento de estructura), Suan, Corozal y Magangué (prefacturas de octubre). Siguen publicados; confirmar que quieren mantenerlos.
 - [ ] **Cifra de respaldo** en la página de Sistemas de medición: "más de 80 actuaciones de campo en un mes para una comercializadora del Caribe". No se nombra a la comercializadora ni a sus clientes. Confirmar que están de acuerdo en publicarla.
 - Los PDF de prefacturas no se publican ni se comparten: contienen clientes finales, precios y datos personales de un tercero.
 
@@ -32,8 +35,9 @@ Lo que ya respondieron está cargado en el sitio y en el panel de edición.
 ### Gerencia
 
 - [ ] **Correo comercial único** para publicar (hoy figura comercial@mastertools.tech como propuesta).
+- [ ] **Correos automáticos del sitio**: ya salen desde negocios@mastertools.tech por el SMTP de Zoho (smtppro.zoho.com, puerto 465), probado el 10 de noviembre en local con una cotización por Manta, una por el formulario con adjunto y una emergencia. Falta: (1) cargar las mismas variables en Netlify para que funcione en producción; (2) que David cambie la contraseña del buzón, que se compartió por chat, o genere una contraseña de aplicación en Zoho (Seguridad > Contraseñas de aplicación) y la use el sitio; (3) decir a qué correos llegan las cotizaciones y a cuáles las emergencias (hoy van a casillas de prueba); (4) dar de baja la clave del Gmail de prueba que se usó hasta ahora.
 - [ ] **Dirección y ciudad sede**, si tienen una sede publicable.
-- [ ] **Lista completa de ciudades atendidas** para Cobertura. Hoy: Barranquilla, Puerto Colombia, Galapa, Cartagena, Santa Marta, Montería, Cereté, Valledupar, Chimichagua y Sincelejo.
+- [x] **Lista de ciudades atendidas**: cargada la lista enviada el 10 de noviembre (34 municipios, incluido Neiva, Huila). Dos nombres se publicaron tal como llegaron y conviene confirmarlos: "El Campano" y "Montebello"; "Cuestesita" se escribió "Cuestecitas".
 - [ ] **Redes sociales**: enlaces de LinkedIn, Instagram y Facebook, o confirmar cuáles usan.
 - [ ] **Correo para hojas de vida** o quitar la línea "¿Quiere trabajar con nosotros?".
 - [ ] **Quiénes editan el panel**: nombre y correo de cada persona, para invitarla.
@@ -43,12 +47,14 @@ Lo que ya respondieron está cargado en el sitio y en el panel de edición.
 - [ ] **Emergencias fuera de horario**: a qué número de WhatsApp o correo llegan los avisos.
 - [ ] **Lista detallada de servicios ejecutados**, agrupada por las doce líneas.
 - [ ] **Casos de éxito, carpetas del Drive**: David pidió a un ingeniero que suba una carpeta por caso con la solicitud del cliente, el resultado y las fotos. Con eso se completan en el panel "El reto" y "Resultado" (hoy vacíos a propósito), el año y el tipo de cliente. Los textos de "Lo que hicimos" se escribieron a partir de sus descripciones y de lo que muestran las fotos: revisar que sean exactos.
-- [ ] **Revisar la lista de casos publicada** (dieciséis): cambio de comercializador en nivel de tensión 2; emergencia por puente primario y daño en DPS; reparación de transferencia de potencia y control; normalización de medida en nivel de tensión 2; daño en acometidas de baja tensión; medida indirecta con relé de protección y disparo transferido; telemedida y medida de nivel 2 en planta solar; falla en medida directa y normalización del servicio; emergencia conjunta con el operador de red; emergencia de mediana complejidad en media tensión; emergencias básicas; medida semidirecta; revisión integral de sistemas de medida (dron); mantenimiento, pruebas y conmutación de TAP; emergencia fuera del Caribe (Tolima); puesta en servicio y certificación de un sistema solar. Decir cuáles se quitan, se unen o cambian de nombre.
-- [ ] **Fotos dudosas que no se usaron**: la captura del software de telemedida (muestra nombres de clientes), las fachadas de locales, la foto con la etiqueta del operador de red y los medidores con número de serie o rótulo escrito a mano. Si quieren alguna, hay que taparla antes.
+- [ ] **Revisar la lista de casos publicada** (dieciocho): cambio de comercializador en nivel de tensión 2; emergencia por puente primario y daño en DPS; mantenimiento y pruebas a transformador de distribución; intervención en subestación de distribución; reparación de transferencia de potencia y control; normalización de medida en nivel de tensión 2; daño en acometidas de baja tensión; medida indirecta con relé de protección y disparo transferido; medida de nivel de tensión 2 y telemedida en planta solar (SSFV); falla en medida directa y normalización del servicio (Sucre); emergencia conjunta con el operador de red; emergencia de mediana complejidad en media tensión; emergencias básicas; instalación de medida directa; medida semidirecta; revisión integral de sistemas de medida (dron); emergencia fuera del Caribe (Tolima); puesta en servicio y certificación de un sistema solar. Decir cuáles se quitan, se unen o cambian de nombre.
+- [ ] **Fotos con nombre de caso**: las fotos que llegaron con el nombre del caso escrito como pie de foto en WhatsApp se publicaron en ese caso. Cuatro rótulos ("Subestación", "Medida directa", "Medida indirecta con relé" y "Conmutación del TAP") llegaron como mensajes sueltos, sin foto adjunta, y no coinciden con las fotos que los siguen: se asignaron por lo que muestra cada imagen (el técnico en la estructura tipo poste es la subestación; el medidor en poste y el de fachada son medida directa; el tablero de control es el relé). Del TAP no hay ninguna foto rotulada: si envían una, se crea el caso. Dos fotos muestran la fachada del comercio atendido, con su letrero: si prefieren no identificar al cliente, se quitan. Las fotos de medidores llevan el serial, el código de barras, el QR y la etiqueta de calibración pixelados; la del centro de medida de Riomar se recortó a la caja de transformadores de corriente.
+- [ ] **Fotos que siguen sin usarse**: la captura del software de telemedida (muestra nombres de clientes), la foto con la etiqueta del operador de red y el NIC, y las fachadas que no vinieron rotuladas con un caso.
 
 ### Equipo técnico
 
-- [ ] **PFQ**: en el subtítulo de Inicio escribieron "pruebas de aislamiento (MEGGER) y PFQ". ¿Qué significa PFQ? Hasta aclararlo, el subtítulo menciona TTR y resistencia de aislamiento. "Megger" no se usa porque es una marca (regla del manual).
+- [ ] **PFQ**: en el subtítulo de Inicio escribieron "pruebas de aislamiento (MEGGER) y PFQ". Entendemos que PFQ son las pruebas fisicoquímicas al aceite dieléctrico del transformador (rigidez dieléctrica, humedad, acidez). Confirmar; si es así, se escribe "pruebas fisicoquímicas al aceite (PFQ)" en el subtítulo y en "Qué incluye" de Pruebas y diagnóstico. Hasta aclararlo, el subtítulo menciona TTR y resistencia de aislamiento. "Megger" no se usa porque es una marca (regla del manual).
+- [ ] **Aviso de emergencias por WhatsApp al equipo** (punto 4.4 del documento): hoy el reporte de Manta llega por correo al buzón de emergencias y, si se configura, al CRM por webhook. El aviso por WhatsApp al responsable necesita una cuenta de WhatsApp Business API o un servicio intermedio: definirlo junto con el número que recibe los avisos fuera de horario.
 - [ ] **Telemedida**: título e introducción de la página (en el documento dicen "Pte"); dejé una propuesta. Preguntas frecuentes. El caso relacionado ya existe (planta solar).
 - [ ] **Calibración de equipos de medida**: texto completo de la página; dejé una propuesta. Confirmar si el certificado lo emite un laboratorio acreditado o si Master Tools gestiona el proceso.
 - [ ] **Suspensión y reconexión**: texto completo de la página; dejé una propuesta. Confirmar si incluye registro fotográfico y reporte.

@@ -40,9 +40,9 @@ const NORMS_DEFAULT =
 export const services: Service[] = [
   {
     slug: "ingenieria-consultoria-proyectos",
-    title: "Ingeniería, consultoría y gestión de proyectos eléctricos",
-    shortName: "Ingeniería y proyectos",
-    lineName: "ingeniería, consultoría y gestión de proyectos",
+    title: "Consultoría y gestión de proyectos eléctricos",
+    shortName: "Consultoría y proyectos",
+    lineName: "consultoría y gestión de proyectos",
     icon: "drafting-compass",
     cardText:
       "Estudios, diseño, consultoría normativa, interventoría y gestión de proyectos eléctricos.",
@@ -59,7 +59,7 @@ export const services: Service[] = [
       "Industrias, constructoras, proyectos de generación, comercializadoras y profesionales independientes.",
     faqs: [],
     seo: {
-      title: "Ingeniería y gestión de proyectos eléctricos",
+      title: "Consultoría y gestión de proyectos eléctricos",
       description:
         "Estudios técnicos, diseño, consultoría normativa RETIE, interventoría y gestión de proyectos eléctricos en el Caribe y el resto del país.",
       keywords: ["consultoría eléctrica", "gestión de proyectos eléctricos", "diseño eléctrico RETIE", "interventoría eléctrica"],
@@ -68,7 +68,7 @@ export const services: Service[] = [
       src: "/fotos/red-rural-camino.jpg",
       alt: "Vista aérea de una red eléctrica rural junto a un camino, con el vehículo del equipo técnico",
     },
-    whatsapp: waMessages.service("ingeniería, consultoría y gestión de proyectos"),
+    whatsapp: waMessages.service("consultoría y gestión de proyectos"),
     pendingNotes: ["Lista de servicios ejecutados, agrupada por línea."],
   },
   {
@@ -111,7 +111,7 @@ export const services: Service[] = [
     lineName: "transformadores y subestaciones",
     icon: "zap",
     cardText:
-      "Revisión, diagnóstico y puesta en servicio, con pruebas antes y después de energizar. Sistemas de potencia, bancos de compensación, transferencias automáticas y sistemas de control.",
+      "Revisión, diagnóstico y puesta en servicio. Sistemas de potencia, bancos de compensación, transferencias automáticas y sistemas de control.",
     intro:
       "Revisamos, diagnosticamos y ponemos en servicio transformadores, celdas y subestaciones, con pruebas antes y después de energizar y un informe técnico al final.",
     includes: [
@@ -126,7 +126,7 @@ export const services: Service[] = [
       "Industrias, constructoras, proyectos de generación y empresas con subestación propia.",
     caseStudy: {
       place: "Caribe colombiano",
-      text: "Mantenimiento, pruebas y conmutación de TAP en transformadores de distribución.",
+      text: "Mantenimiento y pruebas a transformadores de distribución en poste, con equipos calibrados.",
     },
     faqs: [
       {

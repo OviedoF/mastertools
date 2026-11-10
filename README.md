@@ -113,11 +113,15 @@ cosas: aviso interno por correo (cotizaciones a `MAIL_TO`, emergencias a
   el archivo al aviso interno y tiene una trampa para bots.
 - Manta envía a `POST /api/leads` cuando el flujo llega a un nodo con `submit`,
   con la conversación completa.
-- El correo sale por Gmail (`src/lib/mail.ts`): API con `OAUTH_*` o SMTP con
-  contraseña de aplicación. Sin credenciales, la solicitud solo queda en el
-  registro del servidor y el sitio sigue funcionando.
-- Pendiente para producción: buzón propio de Master Tools como remitente y el
-  aviso de emergencias por WhatsApp al responsable (API de Meta o proveedor).
+- El correo sale por `src/lib/mail.ts`. Con `MAIL_HOST` usa cualquier servidor
+  SMTP (Zoho Mail: `smtp.zoho.com`, puerto 465) con usuario y contraseña de
+  aplicación; sin `MAIL_HOST` usa Gmail (API con `OAUTH_*` o SMTP). Sin
+  credenciales, la solicitud solo queda en el registro del servidor y el sitio
+  sigue funcionando.
+- Pendiente para producción: cargar en Netlify el buzón de Master Tools como
+  remitente (`MAIL_HOST`, `MAIL_USERNAME`, `MAIL_PASSWORD`, `MAIL_TO`,
+  `EMERGENCY_TO`) y el aviso de emergencias por WhatsApp al responsable (API de
+  Meta o proveedor).
 - Los mensajes de WhatsApp precargados están en `src/lib/links.ts`.
 
 ## Despliegue
