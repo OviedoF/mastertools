@@ -23,6 +23,12 @@ const nextConfig: NextConfig = {
       { source: "/servicios/emergencias", destination: "/emergencias-electricas", permanent: true },
       { source: "/emergencias", destination: "/emergencias-electricas", permanent: true },
       { source: "/cotizar", destination: "/contacto", permanent: true },
+      // El caso se publicó un día con "directa" en la dirección; era medida indirecta
+      {
+        source: "/proyectos/falla-en-medida-directa-y-normalizacion-del-servicio",
+        destination: "/proyectos/falla-en-medida-indirecta-y-normalizacion-del-servicio",
+        permanent: true,
+      },
     ];
   },
 };

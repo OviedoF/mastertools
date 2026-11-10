@@ -202,6 +202,7 @@ async function main() {
     "project-certificacion-ssfv-santa-marta",
     "project-emergencia-en-media-tension-valledupar",
     "project-transformadores-mantenimiento-pruebas-y-tap",
+    "project-falla-en-medida-directa-y-normalizacion-del-servicio",
   ];
   let tx = docs.reduce((t, d) => t.createOrReplace(d as never), client.transaction());
   tx = retiredProjects.reduce((t, id) => t.delete(id).delete(`drafts.${id}`), tx);
