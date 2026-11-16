@@ -287,6 +287,23 @@ export async function marcarAvisosLeidosAction() {
   revalidatePath("/portal", "layout");
 }
 
+/* ----------------------------- puesta en marcha ----------------------------- */
+
+export async function marcarPasoAction(f: FormData) {
+  const u = await requireAdmin();
+  const paso = str(f, "paso", 40);
+  if (!/^[a-z0-9-]+$/.test(paso)) return;
+  if (str(f, "hecho") === "1") {
+    await query(
+      "insert into puesta_en_marcha (paso, hecho_por) values ($1,$2) on conflict (paso) do update set hecho_por = $2, hecho_en = now()",
+      [paso, u.id],
+    );
+  } else {
+    await query("delete from puesta_en_marcha where paso = $1", [paso]);
+  }
+  revalidatePath("/portal/dashboard");
+}
+
 /* ----------------------------- vistas guardadas ----------------------------- */
 
 const CLAVES_VISTA = ["q", "tipo", "estado", "responsable", "servicio", "ciudad", "desde", "hasta", "vencidas"];

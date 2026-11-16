@@ -141,3 +141,10 @@ create table if not exists recordatorios (
   enviados  int not null default 0,
   creado_en timestamptz not null default now()
 );
+
+-- Pasos de la lista «Puesta en marcha» del dashboard que una persona marcó como hechos.
+create table if not exists puesta_en_marcha (
+  paso      text primary key,
+  hecho_por uuid references usuarios(id) on delete set null,
+  hecho_en  timestamptz not null default now()
+);
