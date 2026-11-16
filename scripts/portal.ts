@@ -50,6 +50,15 @@ async function main() {
       [a[0], await hashPassword(clave)],
     );
     console.log(r.rowCount ? `Contraseña temporal: ${clave}` : "No existe ese usuario.");
+  } else if (cmd === "setpass") {
+    // Solo para entornos de prueba: clave fija, activa al usuario y no pide cambiarla.
+    const [correo, clave] = a;
+    if (!correo || !clave) throw new Error("Uso: pnpm portal setpass correo clave");
+    const r = await pool.query(
+      "update usuarios set clave_hash = $2, activo = true, debe_cambiar = false, intentos = 0, bloqueado_hasta = null where lower(correo) = lower($1)",
+      [correo, await hashPassword(clave)],
+    );
+    console.log(r.rowCount ? `Listo: ${correo} activo, clave definida.` : "No existe ese usuario.");
   } else if (cmd === "demo") {
     if (!local) throw new Error("demo solo corre contra una base local.");
     const clave = "Demo-Portal-2026";

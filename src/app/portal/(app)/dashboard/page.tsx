@@ -1,6 +1,7 @@
 import Link from "next/link";
 import clsx from "clsx";
 import { ArrowDown, ArrowUp, Minus } from "lucide-react";
+import { PuestaEnMarcha } from "@/components/portal/PuestaEnMarcha";
 import { MantaAvatar, tarjeta } from "@/components/portal/ui";
 import { requireAdmin } from "@/lib/portal/auth";
 import { ga4Configured, trafico, type Trafico } from "@/lib/portal/ga4";
@@ -226,6 +227,8 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
           ))}
         </nav>
       </div>
+
+      <PuestaEnMarcha />
 
       <section className={`${tarjeta} flex items-start gap-4`} aria-label="Lectura de Manta">
         <MantaAvatar mood={brief.mood} size={48} className="shrink-0" />
