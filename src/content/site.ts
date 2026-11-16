@@ -75,7 +75,7 @@ export const site: SiteSettings = {
   officeHours: "Lunes a viernes, 8:00 a 16:00",
   address: "[Completar dirección]",
   city: "[Completar ciudad sede]",
-  careersEmail: "[Completar correo]",
+  careersEmail: "gestion@mastertools.tech",
   pending: {
     nit: false,
     email: true,
@@ -83,7 +83,7 @@ export const site: SiteSettings = {
     officeHours: false,
     address: true,
     city: true,
-    careersEmail: true,
+    careersEmail: false,
   },
 
   /** Zona de atención de emergencias (barra superior y página de Emergencias). */
@@ -103,6 +103,7 @@ export const site: SiteSettings = {
     "Cundinamarca",
     "Boyacá",
     "Huila",
+    "Quindío",
   ],
   /** Municipios con trabajos ejecutados (lista enviada por Master Tools el 10 de noviembre de 2026, más los del documento y las prefacturas). */
   cities: [
@@ -145,11 +146,19 @@ export const site: SiteSettings = {
     "Cuestecitas",
     "Montebello",
     "Neiva",
+    "Pitalito",
+    "Ibagué",
+    "Espinal",
+    "Medellín",
+    "Bello",
+    "Bogotá",
+    "Ubaté",
+    "Quibdó",
   ],
 
   stats: [
     { value: 350, prefix: "+", label: "intervenciones ejecutadas" },
-    { value: 13, label: "departamentos atendidos" },
+    { value: 14, label: "departamentos atendidos" },
     { text: "CONTE", label: "personal con matrícula profesional vigente" },
     { text: "RETIE", label: "procesos conforme a la norma" },
   ],

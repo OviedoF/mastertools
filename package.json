@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "build:map": "node scripts/build-map.mjs",
-    "seed:sanity": "tsx scripts/seed-sanity.ts"
+    "seed:sanity": "tsx scripts/seed-sanity.ts",
+    "portal": "tsx --env-file=.env.local scripts/portal.ts"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
@@ -21,6 +22,7 @@
     "next": "16.4.5",
     "next-sanity": "^13.4.0",
     "nodemailer": "^10.3.1",
+    "pg": "^8.23.1",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "sanity": "^6.22.0",
@@ -33,6 +35,7 @@
     "@tailwindcss/turbopack": "^4",
     "@types/node": "^20",
     "@types/nodemailer": "^8.0.2",
+    "@types/pg": "^8.23.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",

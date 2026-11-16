@@ -1,0 +1,94 @@
+-- Portal de Master Tools. Idempotente: se puede correr varias veces (pnpm portal migrate).
+
+create table if not exists usuarios (
+  id            uuid primary key default gen_random_uuid(),
+  nombre        text not null,
+  correo        text not null unique,
+  rol           text not null default 'lectura' check (rol in ('gerencia','comercial','operaciones','lectura')),
+  clave_hash    text not null,
+  activo        boolean not null default true,
+  debe_cambiar  boolean not null default true,
+  intentos      int not null default 0,
+  bloqueado_hasta timestamptz,
+  ultimo_acceso timestamptz,
+  creado_en     timestamptz not null default now()
+);
+
+create table if not exists sesiones (
+  token_hash text primary key,
+  usuario    uuid not null references usuarios(id) on delete cascade,
+  expira_en  timestamptz not null,
+  creada_en  timestamptz not null default now()
+);
+create index if not exists sesiones_usuario on sesiones (usuario);
+
+create table if not exists solicitudes (
+  id          uuid primary key default gen_random_uuid(),
+  numero      bigint generated always as identity,
+  creada_en   timestamptz not null default now(),
+  tipo        text not null check (tipo in ('cotizacion','emergencia')),
+  origen      text not null check (origen in ('form','manta')),
+  estado      text not null default 'nueva' check (estado in
+    ('nueva','contactada','en_cotizacion','ganada','perdida','equipo_asignado','en_sitio','resuelta','facturada','descartada')),
+  responsable uuid references usuarios(id) on delete set null,
+  nombre text, empresa text, telefono text, correo text, ciudad text, direccion text,
+  servicio text, plazo text, mensaje text, falla text, riesgo text,
+  pagina text, conversacion text,
+  primer_contacto_en timestamptz,
+  cerrada_en  timestamptz
+);
+create index if not exists solicitudes_estado on solicitudes (estado, creada_en desc);
+create index if not exists solicitudes_responsable on solicitudes (responsable) where cerrada_en is null;
+
+create table if not exists eventos (
+  id        bigserial primary key,
+  solicitud uuid not null references solicitudes(id) on delete cascade,
+  usuario   uuid references usuarios(id) on delete set null,
+  tipo      text not null,   -- creada, estado, asignacion, nota, adjunto, seguimiento, seguimiento_hecho, correo
+  detalle   jsonb not null default '{}'::jsonb,
+  creado_en timestamptz not null default now()
+);
+create index if not exists eventos_solicitud on eventos (solicitud, creado_en);
+
+create table if not exists notas (
+  id        bigserial primary key,
+  solicitud uuid not null references solicitudes(id) on delete cascade,
+  usuario   uuid not null references usuarios(id),
+  texto     text not null,
+  creada_en timestamptz not null default now()
+);
+create index if not exists notas_solicitud on notas (solicitud, creada_en);
+
+-- Los adjuntos viven en la base (hasta 10 MB cada uno, volumen bajo). Si el volumen crece se pasan a un bucket.
+create table if not exists adjuntos (
+  id        bigserial primary key,
+  solicitud uuid not null references solicitudes(id) on delete cascade,
+  usuario   uuid references usuarios(id) on delete set null,
+  nombre    text not null,
+  tipo      text,
+  tamano    int not null,
+  datos     bytea not null,
+  creado_en timestamptz not null default now()
+);
+create index if not exists adjuntos_solicitud on adjuntos (solicitud);
+
+create table if not exists seguimientos (
+  id          bigserial primary key,
+  solicitud   uuid not null references solicitudes(id) on delete cascade,
+  responsable uuid not null references usuarios(id),
+  programado_para timestamptz not null,
+  motivo      text,
+  hecho       boolean not null default false,
+  cerrado_en  timestamptz
+);
+create index if not exists seguimientos_pendientes on seguimientos (programado_para) where not hecho;
+
+-- Conversaciones de Manta, incluso las que no terminan en solicitud (para medir abandono por paso).
+create table if not exists conversaciones (
+  id        uuid primary key default gen_random_uuid(),
+  creada_en timestamptz not null default now(),
+  paso      text,
+  completa  boolean not null default false,
+  pagina    text,
+  transcripcion text
+);

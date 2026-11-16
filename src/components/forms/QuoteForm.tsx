@@ -6,7 +6,7 @@ import Link from "next/link";
 import clsx from "clsx";
 import { Paperclip, Send } from "lucide-react";
 import { site } from "@/content/site";
-import { submitQuote, type QuoteState } from "@/app/contacto/actions";
+import { submitQuote, type QuoteState } from "@/app/(sitio)/contacto/actions";
 import { Button } from "@/components/ui/Button";
 import { Pending } from "@/components/ui/Pending";
 

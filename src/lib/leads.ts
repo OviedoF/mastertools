@@ -1,5 +1,6 @@
 import "server-only";
 import { site } from "@/content/site";
+import { saveCase } from "./portal/cases";
 import { fieldsTable, layout, mailConfigured, sendMail, type Attachment } from "./mail";
 
 /**
@@ -36,6 +37,8 @@ export type LeadResult = {
   notified: boolean;
   confirmed: boolean;
   webhook: boolean;
+  /** Id del caso en el portal, si la base de datos está configurada */
+  caseId?: string;
   errors: string[];
 };
 
@@ -45,6 +48,21 @@ export async function handleLead(lead: Lead): Promise<LeadResult> {
   const when = fmtDate();
 
   console.info(`[lead] ${lead.kind} vía ${lead.source}`, { ...lead, attachment: lead.attachment?.filename, transcript: undefined });
+
+  // 0) Registro en el portal (no bloquea el resto si falla)
+  const saved = await saveCase({
+    tipo: lead.kind === "emergency" ? "emergencia" : "cotizacion",
+    origen: lead.source,
+    nombre: lead.nombre, empresa: lead.empresa, telefono: lead.telefono, correo: lead.correo,
+    ciudad: lead.ciudad, direccion: lead.direccion, servicio: lead.servicio, plazo: lead.plazo,
+    mensaje: lead.mensaje, falla: lead.falla, riesgo: lead.riesgo, pagina: lead.page, conversacion: lead.transcript,
+    adjunto: lead.attachment && Buffer.isBuffer(lead.attachment.content)
+      ? { filename: lead.attachment.filename, content: lead.attachment.content, contentType: lead.attachment.contentType }
+      : undefined,
+  });
+  if (saved) result.caseId = saved.id;
+  const caseLink = saved ? `${process.env.NEXT_PUBLIC_SITE_URL || ""}/portal/casos/${saved.id}` : undefined;
+  const caseNo = saved ? `#${saved.numero} · ` : "";
 
   // 1) Aviso interno
   try {
@@ -58,10 +76,11 @@ export async function handleLead(lead: Lead): Promise<LeadResult> {
         ["Personas en riesgo", lead.riesgo],
         ["Recibido", when],
         ["Canal", lead.source === "manta" ? "Manta (chat de la web)" : "Formulario de la web"],
+        ["Caso en el portal", caseLink],
       ]);
       const r = await sendMail({
         to: emergencyTo(),
-        subject: `EMERGENCIA – ${lead.ciudad || "sin ciudad"} – ${lead.nombre || "sin nombre"}`,
+        subject: `${caseNo}EMERGENCIA – ${lead.ciudad || "sin ciudad"} – ${lead.nombre || "sin nombre"}`,
         text: `EMERGENCIA ELÉCTRICA\n\n${text}\n\nLlamar al cliente para confirmar la atención.${lead.transcript ? `\n\nConversación:\n${lead.transcript}` : ""}`,
         html: layout(
           "Emergencia eléctrica",
@@ -84,10 +103,11 @@ export async function handleLead(lead: Lead): Promise<LeadResult> {
         ["Recibido", when],
         ["Canal", lead.source === "manta" ? "Manta (chat de la web)" : "Formulario de la web"],
         ["Página de origen", lead.page],
+        ["Caso en el portal", caseLink],
       ]);
       const r = await sendMail({
         to: commercialTo(),
-        subject: `Nueva solicitud de cotización: ${lead.servicio || "servicio sin definir"} – ${lead.ciudad || "sin ciudad"}`,
+        subject: `${caseNo}Nueva solicitud de cotización: ${lead.servicio || "servicio sin definir"} – ${lead.ciudad || "sin ciudad"}`,
         text: `Nueva solicitud de cotización\n\n${text}${lead.transcript ? `\n\nConversación:\n${lead.transcript}` : ""}`,
         html: layout(
           "Nueva solicitud de cotización",

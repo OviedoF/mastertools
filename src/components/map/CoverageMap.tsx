@@ -38,8 +38,11 @@ export function CoverageMap({
   const ref = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState<string | null>(null);
 
-  const tone = (name: string) =>
-    primary.includes(name) ? "primary" : secondary.includes(name) ? "secondary" : "none";
+  // Bogotá, D.C. es un polígono aparte de Cundinamarca: se ilumina junto con él.
+  const tone = (name: string) => {
+    const n = name === "Bogotá, D.C." ? "Cundinamarca" : name;
+    return primary.includes(n) ? "primary" : secondary.includes(n) ? "secondary" : "none";
+  };
 
   useGSAP(
     () => {

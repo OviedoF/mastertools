@@ -3,9 +3,11 @@ import { Phone } from "lucide-react";
 import { site } from "@/content/site";
 import { telHref } from "@/lib/links";
 import { ButtonLink } from "@/components/ui/Button";
+import { SiteShell } from "@/components/layout/SiteShell";
 
 export default function NotFound() {
   return (
+    <SiteShell>
     <section className="bg-niebla">
       <div className="container-x grid items-center gap-10 py-20 md:py-28 lg:grid-cols-[1fr_300px]">
         <div className="max-w-xl">
@@ -37,5 +39,6 @@ export default function NotFound() {
         />
       </div>
     </section>
+    </SiteShell>
   );
 }

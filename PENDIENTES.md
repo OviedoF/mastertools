@@ -79,6 +79,8 @@ Lo que ya respondieron está cargado en el sitio y en el panel de edición.
 
 ## Para más adelante (lo que David adelantó por audio el 4 de noviembre)
 
+- CRM administrativo integrado con dashboard y gestión de solicitudes, y Manta dentro del portal (pedido por escrito el 11 de noviembre). Evaluación, propuesta en fases y anexo técnico en `docs/CRM-Y-MANTA.md`. Portal propio decidido el 13 de noviembre: fase 1 y Manta nivel 1 construidos en `/portal`; para activarlo en producción falta crear la base de datos a nombre de la empresa (Neon o Supabase), cargar `DATABASE_URL` y `PORTAL_ALLOWED_DOMAINS` en Netlify, correr `pnpm portal migrate` contra ella, crear los usuarios con `pnpm portal user` y confirmar con David los plazos de primer contacto (hoy 24 h cotización, 1 h emergencia).
+
 - Hosting a nombre de la empresa, con acceso completo para ellos; el dominio sigue en Wix y solo se cambia el registro A (los registros de correo de Zoho no se tocan).
 - Aplicación interna (web, con APK para Android) para el coordinador de operaciones y los técnicos: asignar trabajos, documentar qué se encontró y qué se hizo, fotos y PDF automático con datos del cliente, técnico, solicitud y registro fotográfico.
 - Apoyo en posicionamiento y campañas segmentadas (clientes B2B: operadores de red, comercializadores, empresas con subestación o proyectos solares).
