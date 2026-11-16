@@ -73,7 +73,8 @@ export async function submitQuote(_prev: QuoteState, formData: FormData): Promis
 
   // Si había un canal configurado y ninguno funcionó, se lo decimos al cliente.
   const anyChannel = (await getSetting("MAIL_USERNAME")) || (await getSetting("LEAD_WEBHOOK_URL"));
-  if (anyChannel && !result.notified && !result.webhook) {
+  // Si la solicitud quedó guardada en el portal, no es un fallo para el cliente: el equipo la va a ver aunque el correo haya fallado.
+  if (anyChannel && !result.notified && !result.webhook && !result.caseId) {
     console.error("[lead] fallo de envío", result.errors);
     return {
       message:
