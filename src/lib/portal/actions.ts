@@ -6,6 +6,8 @@ import { layout, sendMail } from "@/lib/mail";
 import { currentUser, login, logout, requireAdmin, requireManager, setPassword } from "./auth";
 import { hashPassword, tempPassword } from "./password";
 import { one, query, tx } from "./db";
+import { AJUSTES, getSetting, guardarAjuste, quitarAjuste } from "@/lib/settings";
+import { ga4Configured, olvidarTrafico, trafico } from "./ga4";
 import { CIERRE, FLUJO, ROLES, type Estado, type Rol, type Tipo } from "./model";
 
 const str = (f: FormData, k: string, max = 2000) => String(f.get(k) ?? "").trim().slice(0, max);
@@ -179,7 +181,7 @@ export async function crearUsuarioAction(_: FormState, f: FormData): Promise<For
   const correo = str(f, "correo", 200).toLowerCase();
   const rol = str(f, "rol") as Rol;
   if (!nombre || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(correo) || !(rol in ROLES)) return { error: "Revise el nombre, el correo y el rol." };
-  const dominios = (process.env.PORTAL_ALLOWED_DOMAINS ?? "").split(",").map((d) => d.trim().toLowerCase()).filter(Boolean);
+  const dominios = (await getSetting("PORTAL_ALLOWED_DOMAINS")).split(",").map((d) => d.trim().toLowerCase()).filter(Boolean);
   if (dominios.length && !dominios.includes(correo.split("@")[1])) return { error: `Solo se admiten correos de ${dominios.join(", ")}.` };
   if (await one("select 1 from usuarios where lower(correo) = $1", [correo])) return { error: "Ya existe un usuario con ese correo." };
   const clave = tempPassword();
@@ -207,4 +209,48 @@ export async function reiniciarClaveAction(_: FormState, f: FormData): Promise<F
   await query("update usuarios set clave_hash = $2, debe_cambiar = true, intentos = 0, bloqueado_hasta = null where id = $1", [id, await hashPassword(clave)]);
   await query("delete from sesiones where usuario = $1", [id]);
   return { ok: "Contraseña temporal generada. Entréguela por un canal privado.", clave };
+}
+
+/* ----------------------------- ajustes ----------------------------- */
+
+export async function guardarAjusteAction(_: FormState, f: FormData): Promise<FormState> {
+  const admin = await requireAdmin();
+  const clave = str(f, "clave", 80);
+  if (!AJUSTES.some((a) => a.clave === clave)) return { error: "Ajuste desconocido." };
+  // Las claves privadas llevan saltos de línea: no se recortan por dentro ni se limitan a 2000 caracteres.
+  const err = await guardarAjuste(clave, String(f.get("valor") ?? "").slice(0, 8000), admin.id);
+  if (err) return { error: err };
+  olvidarTrafico();
+  revalidatePath("/portal/ajustes");
+  revalidatePath("/portal/dashboard");
+  return { ok: "Guardado." };
+}
+
+export async function quitarAjusteAction(f: FormData) {
+  const admin = await requireAdmin();
+  await quitarAjuste(str(f, "clave", 80), admin.id);
+  olvidarTrafico();
+  revalidatePath("/portal/ajustes");
+  revalidatePath("/portal/dashboard");
+}
+
+export async function probarConexionAction(_: FormState, f: FormData): Promise<FormState> {
+  await requireAdmin();
+  const que = str(f, "que", 20);
+  try {
+    if (que === "analytics") {
+      if (!(await ga4Configured())) return { error: "Faltan datos de Google Analytics (propiedad, correo o clave)." };
+      olvidarTrafico();
+      const t = await trafico(7);
+      return { ok: `Conexión correcta. Últimos 7 días: ${t.usuarios} visitantes y ${t.sesiones} sesiones.` };
+    }
+    if (que === "correo") {
+      const { probarCorreo } = await import("@/lib/mail");
+      const r = await probarCorreo();
+      return r.ok ? { ok: r.detalle } : { error: r.detalle };
+    }
+  } catch (e) {
+    return { error: (e as Error).message };
+  }
+  return { error: "Prueba desconocida." };
 }

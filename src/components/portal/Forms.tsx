@@ -1,9 +1,9 @@
 "use client";
 
 import { useActionState } from "react";
-import { cambiarClaveAction, crearUsuarioAction, loginAction, reiniciarClaveAction, type FormState } from "@/lib/portal/actions";
+import { cambiarClaveAction, crearUsuarioAction, guardarAjusteAction, loginAction, probarConexionAction, reiniciarClaveAction, type FormState } from "@/lib/portal/actions";
 import { ROLES } from "@/lib/portal/model";
-import { boton, input } from "./ui";
+import { boton, botonSuave, input } from "./ui";
 
 function Mensaje({ s }: { s: FormState }) {
   if (!s) return null;
@@ -90,6 +90,38 @@ export function ReiniciarClaveForm({ id }: { id: string }) {
       <button className="text-sm font-semibold text-profundo underline-offset-2 hover:underline disabled:opacity-60" disabled={pending}>
         Restablecer contraseña
       </button>
+      <Mensaje s={s} />
+    </form>
+  );
+}
+
+export function AjusteForm({ clave, secreto, multilinea, valor, placeholder, definido }: {
+  clave: string; secreto?: boolean; multilinea?: boolean; valor: string; placeholder?: string; definido: boolean;
+}) {
+  const [s, action, pending] = useActionState(guardarAjusteAction, undefined);
+  const comun = {
+    name: "valor", required: true, autoComplete: "off", spellCheck: false, "aria-label": clave,
+    placeholder: secreto && definido ? "•••••••• guardado; escriba para reemplazar" : placeholder,
+    className: `${input} ${multilinea ? "min-h-28 py-2 font-mono text-xs" : ""}`,
+  };
+  return (
+    <form action={action} className="space-y-2">
+      <input type="hidden" name="clave" value={clave} />
+      {multilinea ? <textarea {...comun} /> : <input {...comun} type={secreto ? "password" : "text"} defaultValue={secreto ? "" : valor} />}
+      <div className="flex flex-wrap items-center gap-3">
+        <button className={boton} disabled={pending}>{pending ? "Guardando…" : "Guardar"}</button>
+        <Mensaje s={s} />
+      </div>
+    </form>
+  );
+}
+
+export function ProbarForm({ que, etiqueta }: { que: "analytics" | "correo"; etiqueta: string }) {
+  const [s, action, pending] = useActionState(probarConexionAction, undefined);
+  return (
+    <form action={action} className="space-y-2">
+      <input type="hidden" name="que" value={que} />
+      <button className={botonSuave} disabled={pending}>{pending ? "Probando…" : etiqueta}</button>
       <Mensaje s={s} />
     </form>
   );

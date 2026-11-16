@@ -4,15 +4,16 @@ import { useEffect } from "react";
 
 declare global {
   interface Window {
-    dataLayer?: Record<string, unknown>[];
+    dataLayer?: unknown[];
+    gtag?: (...args: unknown[]) => void;
   }
 }
 
 /**
  * Registra como evento cada clic en los caminos de conversión
  * (documento de estructura, 3.2 y 4.2): llamadas, WhatsApp, cotización,
- * chat. Empuja al dataLayer para conectarlo a Google Analytics 4 o
- * Tag Manager en la etapa de desarrollo. En desarrollo también lo
+ * chat. Envía el evento a Google Analytics 4 (gtag) o, si no está la
+ * etiqueta, lo empuja al dataLayer para Tag Manager. En desarrollo también lo
  * muestra en consola.
  */
 export function TrackClicks() {
@@ -36,8 +37,14 @@ export function TrackClicks() {
         page: window.location.pathname,
         label: el.textContent?.trim().slice(0, 60) || undefined,
       };
-      window.dataLayer = window.dataLayer ?? [];
-      window.dataLayer.push(payload);
+      // Con la etiqueta de GA4 cargada se envía como evento; si no, queda en el dataLayer (Tag Manager).
+      if (window.gtag) {
+        const { event, ...params } = payload;
+        window.gtag("event", event, params);
+      } else {
+        window.dataLayer = window.dataLayer ?? [];
+        window.dataLayer.push(payload);
+      }
       if (process.env.NODE_ENV !== "production") console.debug("[track]", payload);
     };
     document.addEventListener("click", onClick, { capture: true });

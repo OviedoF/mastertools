@@ -344,7 +344,8 @@ Decisión del 13 de noviembre de 2026: camino B, portal propio. Ya está constru
 - **Roles creados:** `gerencia` (todo y usuarios), `comercial` (gestiona cotizaciones), `operaciones` (gestiona emergencias), `lectura` (solo consulta). Todos los roles ven todos los casos.
 - **Plazos de primer contacto** (para marcar "vencida"): 24 horas en cotizaciones y 1 hora en emergencias. Están en `src/lib/portal/model.ts` y hay que confirmarlos con David.
 - **Estructura:** el sitio público quedó en el grupo de rutas `src/app/(sitio)` y el portal en `src/app/portal`, con su propio diseño (sin encabezado, pie ni chat público). `src/proxy.ts` protege `/portal/*`.
-- **Falta** (fases 2 y 3): dashboard con GA4 y conversiones, recordatorio diario de seguimientos vencidos (función programada), vistas guardadas, tabla `conversaciones` para medir abandono del chat, Manta con IA, WhatsApp a emergencias.
+- **Fase 2, construido el 16 de noviembre de 2026:** `/portal/dashboard` (solo gerencia) con las solicitudes por período y comparación con el anterior, el chat de Manta con el paso donde se abandona (la tabla `conversaciones` ya se llena desde el sitio) y el tráfico de GA4 (visitantes, sesiones, permanencia, páginas, fuentes, dispositivos, ciudades, clics por botón y tasa de conversión). `/portal/ajustes` (solo gerencia) guarda en la base, con los secretos cifrados, las credenciales y conexiones: GA4, correo de salida, destinatarios, webhook y dominios permitidos; ver `docs/AJUSTES.md` y `docs/GA4.md`.
+- **Falta** (fases 2 y 3): recordatorio diario de seguimientos vencidos (función programada), vistas guardadas por persona, avisos dentro del portal, Manta con IA, WhatsApp a emergencias. El dashboard de tráfico se ve cuando Master Tools crea la propiedad de GA4 y se cargan sus datos en Ajustes.
 
 ### Cómo se pone en marcha
 

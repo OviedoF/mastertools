@@ -92,3 +92,22 @@ create table if not exists conversaciones (
   pagina    text,
   transcripcion text
 );
+
+-- Ajustes de conexión y credenciales editables por gerencia (valor secreto cifrado). Ver docs/AJUSTES.md.
+create table if not exists ajustes (
+  clave           text primary key,
+  valor           text,
+  secreto         boolean not null default false,
+  actualizado_en  timestamptz not null default now(),
+  actualizado_por uuid references usuarios(id) on delete set null
+);
+
+-- Quién cambió qué y cuándo (nunca guarda el valor).
+create table if not exists ajustes_historial (
+  id        bigserial primary key,
+  clave     text not null,
+  usuario   uuid references usuarios(id) on delete set null,
+  accion    text not null check (accion in ('guardado','quitado')),
+  creado_en timestamptz not null default now()
+);
+create index if not exists ajustes_historial_fecha on ajustes_historial (creado_en desc);

@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { getSetting } from "@/lib/settings";
 import { serviceLines } from "@/content/services";
 import { handleLead } from "@/lib/leads";
 
@@ -71,7 +72,7 @@ export async function submitQuote(_prev: QuoteState, formData: FormData): Promis
   });
 
   // Si había un canal configurado y ninguno funcionó, se lo decimos al cliente.
-  const anyChannel = process.env.MAIL_USERNAME || process.env.LEAD_WEBHOOK_URL;
+  const anyChannel = (await getSetting("MAIL_USERNAME")) || (await getSetting("LEAD_WEBHOOK_URL"));
   if (anyChannel && !result.notified && !result.webhook) {
     console.error("[lead] fallo de envío", result.errors);
     return {

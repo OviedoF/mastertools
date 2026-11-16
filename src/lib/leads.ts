@@ -2,6 +2,7 @@ import "server-only";
 import { site } from "@/content/site";
 import { saveCase } from "./portal/cases";
 import { fieldsTable, layout, mailConfigured, sendMail, type Attachment } from "./mail";
+import { getSetting } from "./settings";
 
 /**
  * Una solicitud, venga del formulario o de Manta. Es el contrato que en la
@@ -28,8 +29,8 @@ export type Lead = {
   attachment?: Attachment;
 };
 
-const commercialTo = () => process.env.MAIL_TO || process.env.MAIL_USERNAME || "";
-const emergencyTo = () => process.env.EMERGENCY_TO || commercialTo();
+const commercialTo = async () => (await getSetting("MAIL_TO")) || (await getSetting("MAIL_USERNAME"));
+const emergencyTo = async () => (await getSetting("EMERGENCY_TO")) || commercialTo();
 const fmtDate = () =>
   new Intl.DateTimeFormat("es-CO", { dateStyle: "medium", timeStyle: "short", timeZone: "America/Bogota" }).format(new Date());
 
@@ -79,7 +80,7 @@ export async function handleLead(lead: Lead): Promise<LeadResult> {
         ["Caso en el portal", caseLink],
       ]);
       const r = await sendMail({
-        to: emergencyTo(),
+        to: await emergencyTo(),
         subject: `${caseNo}EMERGENCIA – ${lead.ciudad || "sin ciudad"} – ${lead.nombre || "sin nombre"}`,
         text: `EMERGENCIA ELÉCTRICA\n\n${text}\n\nLlamar al cliente para confirmar la atención.${lead.transcript ? `\n\nConversación:\n${lead.transcript}` : ""}`,
         html: layout(
@@ -106,7 +107,7 @@ export async function handleLead(lead: Lead): Promise<LeadResult> {
         ["Caso en el portal", caseLink],
       ]);
       const r = await sendMail({
-        to: commercialTo(),
+        to: await commercialTo(),
         subject: `${caseNo}Nueva solicitud de cotización: ${lead.servicio || "servicio sin definir"} – ${lead.ciudad || "sin ciudad"}`,
         text: `Nueva solicitud de cotización\n\n${text}${lead.transcript ? `\n\nConversación:\n${lead.transcript}` : ""}`,
         html: layout(
@@ -147,7 +148,7 @@ Equipo Master Tools`;
             .map((p) => `<p style="margin:0 0 12px">${p.replace(/\n/g, "<br>")}</p>`)
             .join(""),
         ),
-        replyTo: commercialTo() || undefined,
+        replyTo: (await commercialTo()) || undefined,
       });
       result.confirmed = r.sent;
     } catch (e) {
@@ -156,7 +157,7 @@ Equipo Master Tools`;
   }
 
   // 3) Webhook opcional (CRM, Make, Zapier, Apps Script de una planilla…)
-  const hook = process.env.LEAD_WEBHOOK_URL;
+  const hook = await getSetting("LEAD_WEBHOOK_URL");
   if (hook) {
     try {
       const res = await fetch(hook, {
@@ -172,7 +173,7 @@ Equipo Master Tools`;
     }
   }
 
-  if (!mailConfigured() && !hook) {
+  if (!(await mailConfigured()) && !hook) {
     console.info("[lead] sin correo ni webhook configurados: la solicitud solo quedó en el registro del servidor.");
   }
   return result;

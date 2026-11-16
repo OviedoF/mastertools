@@ -30,9 +30,17 @@ export default async function PortalLayout({ children }: { children: ReactNode }
               Solicitudes
             </Link>
             {puedeAdministrar(u.rol) && (
-              <Link href="/portal/usuarios" className="rounded-lg px-3 py-2 hover:bg-white/10">
-                Usuarios
-              </Link>
+              <>
+                <Link href="/portal/dashboard" className="rounded-lg px-3 py-2 hover:bg-white/10">
+                  Dashboard
+                </Link>
+                <Link href="/portal/usuarios" className="rounded-lg px-3 py-2 hover:bg-white/10">
+                  Usuarios
+                </Link>
+                <Link href="/portal/ajustes" className="rounded-lg px-3 py-2 hover:bg-white/10">
+                  Ajustes
+                </Link>
+              </>
             )}
           </nav>
           <div className="ml-auto flex items-center gap-3 text-sm">

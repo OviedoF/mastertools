@@ -64,6 +64,34 @@ export function MantaBubble() {
   const transcriptRef = useRef<string>("");
   const panelId = useId();
 
+  // Registro de la conversación para medir en qué paso se abandona (sin guardar el texto escrito).
+  const sidRef = useRef("");
+  const nodeIdRef = useRef("start");
+  const doneRef = useRef(false);
+  useEffect(() => {
+    nodeIdRef.current = nodeId;
+  }, [nodeId]);
+  const sendConv = () => {
+    if (!sidRef.current) return;
+    try {
+      const body = JSON.stringify({ id: sidRef.current, paso: nodeIdRef.current, completa: doneRef.current, pagina: window.location.pathname });
+      navigator.sendBeacon?.("/api/manta/conversacion", new Blob([body], { type: "application/json" }));
+    } catch {
+      /* el registro es opcional: nunca debe afectar al chat */
+    }
+  };
+  useEffect(() => {
+    const onHide = () => {
+      if (document.visibilityState === "hidden") sendConv();
+    };
+    document.addEventListener("visibilitychange", onHide);
+    window.addEventListener("pagehide", sendConv);
+    return () => {
+      document.removeEventListener("visibilitychange", onHide);
+      window.removeEventListener("pagehide", sendConv);
+    };
+  }, []);
+
   // Conversación en texto plano, para adjuntarla al registro de la solicitud
   useEffect(() => {
     transcriptRef.current = messages
@@ -119,6 +147,11 @@ export function MantaBubble() {
   }
 
   function goTo(id: string, nextAnswers: Record<string, string>) {
+    if (id === "start") {
+      if (sidRef.current && !doneRef.current) sendConv(); // cierra la conversación anterior
+      sidRef.current = typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : "";
+      doneRef.current = false;
+    }
     const target = nodes[id] ?? nodes.notsure;
     const nextCtx: Ctx = { answers: nextAnswers, service: nextAnswers.service };
     setNodeId(id);
@@ -135,6 +168,8 @@ export function MantaBubble() {
       setMood(target.mood ?? "feliz");
       setTyping(false);
       if (target.submit) {
+        doneRef.current = true;
+        sendConv();
         // Registra la solicitud: aviso al equipo, confirmación y CRM (ver src/lib/leads.ts)
         const kind = target.submit;
         fetch("/api/leads", {

@@ -1,5 +1,6 @@
 import "server-only";
 import nodemailer, { type Transporter } from "nodemailer";
+import { getSetting } from "./settings";
 
 /**
  * Envío de correo. Con MAIL_HOST se usa cualquier servidor SMTP (por ejemplo
@@ -9,20 +10,32 @@ import nodemailer, { type Transporter } from "nodemailer";
  * Sin credenciales, no envía y lo informa.
  */
 type Candidate = { name: "oauth2" | "smtp"; transporter: Transporter };
-let candidates: Candidate[] | undefined;
+let candidates: { firma: string; list: Candidate[] } | undefined;
 /** Si OAuth2 falló una vez (token vencido), se salta en los envíos siguientes. */
 let oauthBroken = false;
 
-export function mailConfigured() {
-  return !!process.env.MAIL_USERNAME && !!(process.env.OAUTH_REFRESH_TOKEN || process.env.MAIL_PASSWORD);
+/** Credenciales de correo vigentes: lo guardado en el portal (Ajustes) manda sobre las variables del servidor. */
+async function mailEnv() {
+  const [MAIL_USERNAME, MAIL_PASSWORD, MAIL_HOST, MAIL_PORT, MAIL_FROM_NAME] = await Promise.all(
+    ["MAIL_USERNAME", "MAIL_PASSWORD", "MAIL_HOST", "MAIL_PORT", "MAIL_FROM_NAME"].map(getSetting),
+  );
+  const { OAUTH_CLIENTID, OAUTH_CLIENT_SECRET, OAUTH_REFRESH_TOKEN, MAIL_SECURE } = process.env;
+  return { MAIL_USERNAME, MAIL_PASSWORD, MAIL_HOST, MAIL_PORT, MAIL_FROM_NAME, OAUTH_CLIENTID, OAUTH_CLIENT_SECRET, OAUTH_REFRESH_TOKEN, MAIL_SECURE };
 }
 
-function buildCandidates(): Candidate[] {
-  if (candidates) return candidates;
-  const user = process.env.MAIL_USERNAME;
+export async function mailConfigured() {
+  const e = await mailEnv();
+  return !!e.MAIL_USERNAME && !!(e.OAUTH_REFRESH_TOKEN || e.MAIL_PASSWORD);
+}
+
+async function buildCandidates(): Promise<Candidate[]> {
+  const e = await mailEnv();
+  const firma = JSON.stringify(e);
+  if (candidates && candidates.firma === firma) return candidates.list; // se reconstruye si cambió algún ajuste
+  const user = e.MAIL_USERNAME;
   const list: Candidate[] = [];
   if (user) {
-    const { OAUTH_CLIENTID, OAUTH_CLIENT_SECRET, OAUTH_REFRESH_TOKEN, MAIL_PASSWORD } = process.env;
+    const { OAUTH_CLIENTID, OAUTH_CLIENT_SECRET, OAUTH_REFRESH_TOKEN, MAIL_PASSWORD } = e;
     if (OAUTH_CLIENTID && OAUTH_CLIENT_SECRET && OAUTH_REFRESH_TOKEN) {
       list.push({
         name: "oauth2",
@@ -34,8 +47,8 @@ function buildCandidates(): Candidate[] {
     }
     if (MAIL_PASSWORD) {
       const pass = MAIL_PASSWORD.replace(/^["']|["']$/g, "");
-      const host = process.env.MAIL_HOST?.trim();
-      const port = Number(process.env.MAIL_PORT) || 465;
+      const host = e.MAIL_HOST?.trim();
+      const port = Number(e.MAIL_PORT) || 465;
       list.push({
         name: "smtp",
         transporter: host
@@ -43,14 +56,14 @@ function buildCandidates(): Candidate[] {
               host,
               port,
               // 465 es SSL directo; 587 negocia STARTTLS. MAIL_SECURE fuerza uno u otro.
-              secure: process.env.MAIL_SECURE ? process.env.MAIL_SECURE === "true" : port === 465,
+              secure: e.MAIL_SECURE ? e.MAIL_SECURE === "true" : port === 465,
               auth: { user, pass },
             })
           : nodemailer.createTransport({ service: "gmail", auth: { user, pass } }),
       });
     }
   }
-  candidates = list;
+  candidates = { firma, list };
   return list;
 }
 
@@ -64,14 +77,15 @@ export async function sendMail(opts: {
   replyTo?: string;
   attachments?: Attachment[];
 }) {
-  const list = buildCandidates();
+  const list = await buildCandidates();
   if (!list.length) {
     console.info("[mail] sin credenciales; no se envía:", opts.subject, "→", opts.to);
     return { sent: false as const, reason: "not-configured" as const };
   }
-  const fromName = process.env.MAIL_FROM_NAME ?? "Master Tools";
+  const env = await mailEnv();
+  const fromName = env.MAIL_FROM_NAME || "Master Tools";
   const message = {
-    from: `"${fromName}" <${process.env.MAIL_USERNAME}>`,
+    from: `"${fromName}" <${env.MAIL_USERNAME}>`,
     to: opts.to,
     subject: opts.subject,
     text: opts.text,
@@ -126,4 +140,17 @@ export function fieldsTable(rows: [string, string | undefined | null][]) {
       .join("") +
     `</table>`;
   return { text, html };
+}
+
+/** Comprueba que el servidor de correo acepta las credenciales, sin enviar nada. */
+export async function probarCorreo(): Promise<{ ok: boolean; detalle: string }> {
+  const list = await buildCandidates();
+  const smtp = list.find((c) => c.name === "smtp");
+  if (!smtp) return { ok: false, detalle: "Faltan el usuario o la contraseña del correo." };
+  try {
+    await smtp.transporter.verify();
+    return { ok: true, detalle: "El servidor aceptó las credenciales." };
+  } catch (e) {
+    return { ok: false, detalle: (e as Error).message };
+  }
 }
