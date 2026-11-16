@@ -32,3 +32,19 @@ Esto no aparece en el portal: es lo que hace el equipo de desarrollo para que lo
 - [ ] Descarga de un adjunto: que el archivo abra bien.
 - [ ] Un usuario de cada rol: ve solo lo que le corresponde.
 - [ ] Plazos de primer contacto (`PLAZO_PRIMER_CONTACTO_H` en `src/lib/portal/model.ts`): hoy 24 h cotización, 1 h emergencia, pendientes de confirmar con el cliente.
+
+## Qué hacer cuando el cliente le pase cada dato
+
+El panel «Para dejar todo listo» le dice al cliente cómo conseguir cada dato. Usted lo carga así:
+
+| El cliente le pasa | Usted hace | Se marca solo cuando |
+| --- | --- | --- |
+| Buzón, contraseña de aplicación de Zoho, correos de cotizaciones y de emergencias | Ajustes > Correo de salida (servidor `smtppro.zoho.com`, puerto 465, usuario, contraseña, nombre) y Destinatarios. Pulsar «Probar conexión con el correo». Zoho puede usar otro servidor según la región de la cuenta | `MAIL_USERNAME` y `MAIL_TO` están definidos |
+| ID de medición (G-…) y ID de propiedad | Cargar `GA_MEASUREMENT_ID` y `GA4_PROPERTY_ID`. Crear su cuenta de servicio (`docs/GA4.md`: proyecto en Google Cloud, activar «Google Analytics Data API», cuenta de servicio, clave JSON) y **enviarle al cliente el correo de la cuenta de servicio** para que lo agregue como Lector. Cargar `GA4_CLIENT_EMAIL` y `GA4_PRIVATE_KEY`; probar con el botón | Hay ID de medición y las credenciales de GA4 |
+| Acceso de administrador en Meta Business, número dedicado y números del equipo | `docs/WHATSAPP.md`: app de Meta, producto WhatsApp, número, usuario del sistema con token permanente, plantilla `aviso_emergencia`. Cargar los cinco datos y probar | Token, ID de número, destinatarios y plantilla están definidos |
+| Lista de personas con rol | Primero `PORTAL_ALLOWED_DOMAINS` en Ajustes; luego Usuarios > Nuevo usuario por cada una, y desactivar los `prueba.…` | Hay usuarios activos que no son de prueba |
+| «Los plazos están bien» o plazos nuevos | Si cambian: `PLAZO_PRIMER_CONTACTO_H` en `src/lib/portal/model.ts` y publicar | Marcar a mano |
+| Fecha para la prueba final | Hacerla juntos; ver «Verificar después de publicar» | Marcar a mano |
+
+Nota sobre GA4: si el cliente prefiere no depender de su proyecto de Google Cloud, la cuenta de servicio puede ser de usted;
+el cliente solo agrega ese correo como Lector. Los datos siguen siendo del cliente. Aclárelo con él.
