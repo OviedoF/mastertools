@@ -48,6 +48,9 @@ export default async function PortalLayout({ children }: { children: ReactNode }
                 </Link>
               </>
             )}
+            <Link href="/portal/guia" className="rounded-lg px-3 py-2 hover:bg-white/10">
+              Guía
+            </Link>
           </nav>
           <div className="ml-auto flex items-center gap-3 text-sm">
             <Link href="/portal/avisos" className="relative rounded-lg p-2 hover:bg-white/10" aria-label={avisosSinLeer ? `Avisos, ${avisosSinLeer} sin leer` : "Avisos"} title="Avisos">
