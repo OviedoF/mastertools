@@ -1,21 +1,27 @@
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { after } from "next/server";
 import type { ReactNode } from "react";
-import { LogOut } from "lucide-react";
+import { Bell, LogOut } from "lucide-react";
 import { MantaDock } from "@/components/portal/MantaDock";
 import { logoutAction } from "@/lib/portal/actions";
 import { requireUser } from "@/lib/portal/auth";
+import { contarAvisos } from "@/lib/portal/avisos";
 import { resumen } from "@/lib/portal/cases";
 import { mantaBrief } from "@/lib/portal/manta";
+import { PREGUNTAS_MANTA } from "@/lib/portal/manta-preguntas";
 import { ROLES, puedeAdministrar } from "@/lib/portal/model";
+import { recordatorioOportunista } from "@/lib/portal/recordatorios";
 
 export const dynamic = "force-dynamic";
 
 export default async function PortalLayout({ children }: { children: ReactNode }) {
   const u = await requireUser();
   if (u.debe_cambiar) redirect("/portal/clave");
-  const brief = mantaBrief(await resumen(u.id), u.nombre);
+  const [r, avisosSinLeer] = await Promise.all([resumen(u.id), contarAvisos(u.id)]);
+  const brief = mantaBrief(r, u.nombre);
+  after(recordatorioOportunista);
 
   return (
     <>
@@ -44,6 +50,12 @@ export default async function PortalLayout({ children }: { children: ReactNode }
             )}
           </nav>
           <div className="ml-auto flex items-center gap-3 text-sm">
+            <Link href="/portal/avisos" className="relative rounded-lg p-2 hover:bg-white/10" aria-label={avisosSinLeer ? `Avisos, ${avisosSinLeer} sin leer` : "Avisos"} title="Avisos">
+              <Bell className="size-5" aria-hidden="true" />
+              {avisosSinLeer > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 grid min-w-5 place-items-center rounded-full bg-alerta px-1 text-[11px] font-bold text-noche">{avisosSinLeer > 99 ? "99+" : avisosSinLeer}</span>
+              )}
+            </Link>
             <span className="text-right leading-tight">
               <span className="block font-semibold">{u.nombre}</span>
               <span className="block text-xs text-white/70">{ROLES[u.rol].label}</span>
@@ -57,7 +69,7 @@ export default async function PortalLayout({ children }: { children: ReactNode }
         </div>
       </header>
       <main className="mx-auto w-full max-w-7xl px-5 pt-6 pb-28 sm:px-8">{children}</main>
-      <MantaDock mood={brief.mood} saludo={brief.saludo} resumen={brief.resumen} avisos={brief.avisos} />
+      <MantaDock mood={brief.mood} saludo={brief.saludo} resumen={brief.resumen} avisos={brief.avisos} preguntas={PREGUNTAS_MANTA} />
     </>
   );
 }

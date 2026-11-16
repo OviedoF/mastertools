@@ -111,3 +111,33 @@ create table if not exists ajustes_historial (
   creado_en timestamptz not null default now()
 );
 create index if not exists ajustes_historial_fecha on ajustes_historial (creado_en desc);
+
+-- Avisos dentro del portal (campana): solicitud nueva, asignación, seguimientos vencidos.
+create table if not exists avisos (
+  id        bigserial primary key,
+  usuario   uuid not null references usuarios(id) on delete cascade,
+  tipo      text not null,
+  titulo    text not null,
+  detalle   text,
+  solicitud uuid references solicitudes(id) on delete cascade,
+  leido     boolean not null default false,
+  creado_en timestamptz not null default now()
+);
+create index if not exists avisos_usuario on avisos (usuario, leido, creado_en desc);
+
+-- Vistas de la bandeja guardadas por cada persona.
+create table if not exists vistas (
+  id        bigserial primary key,
+  usuario   uuid not null references usuarios(id) on delete cascade,
+  nombre    text not null,
+  filtros   text not null,
+  creada_en timestamptz not null default now(),
+  unique (usuario, nombre)
+);
+
+-- Un registro por día en que ya corrió el recordatorio de seguimientos vencidos (evita enviarlo dos veces).
+create table if not exists recordatorios (
+  dia       date primary key,
+  enviados  int not null default 0,
+  creado_en timestamptz not null default now()
+);

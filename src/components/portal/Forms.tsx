@@ -116,7 +116,7 @@ export function AjusteForm({ clave, secreto, multilinea, valor, placeholder, def
   );
 }
 
-export function ProbarForm({ que, etiqueta }: { que: "analytics" | "correo"; etiqueta: string }) {
+export function ProbarForm({ que, etiqueta }: { que: "analytics" | "correo" | "whatsapp" | "recordatorio"; etiqueta: string }) {
   const [s, action, pending] = useActionState(probarConexionAction, undefined);
   return (
     <form action={action} className="space-y-2">

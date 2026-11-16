@@ -198,6 +198,7 @@ export const nodes: Record<string, Node> = {
       { label: "Transformadores, pruebas y diagnóstico", value: "transformadores", next: "q_privacy" },
       { label: "Energía solar", value: "solar", next: "q_privacy" },
       { label: "Otro servicio", next: "other" },
+      { label: "Tengo una pregunta", next: "faq" },
     ],
     field: "service",
   },
@@ -440,6 +441,77 @@ export const nodes: Record<string, Node> = {
       { label: "Escribir por WhatsApp", href: waGeneralHref },
       { label: "Llamar", href: telHref },
       { label: "Volver", next: "start" },
+    ],
+  },
+  /* ------------------------ Preguntas frecuentes (respuestas fijas) ------------------------ */
+  faq: {
+    id: "faq",
+    mood: "feliz",
+    say: "Con gusto. ¿Qué le gustaría saber?",
+    options: [
+      { label: "Servicios que prestan", next: "faq_servicios" },
+      { label: "Horario y tiempo de respuesta", next: "faq_horario" },
+      { label: "Dónde atienden", next: "faq_cobertura" },
+      { label: "Cómo se cotiza", next: "faq_cotizar" },
+      { label: "Personal y matrícula", next: "faq_personal" },
+      { label: "Qué hago ante una falla eléctrica", next: "faq_falla" },
+      { label: "Volver", next: "start" },
+    ],
+  },
+  faq_servicios: {
+    id: "faq_servicios",
+    mood: "feliz",
+    say: "Prestamos doce líneas de servicio: consultoría y proyectos, ingeniería eléctrica, transformadores y subestaciones, pruebas y diagnóstico, sistemas de medición y cambio de comercializador, telemedida, calibración de equipos de medida, suspensión y reconexión, energía solar, redes de baja y media tensión, mantenimiento y emergencias eléctricas.",
+    options: [
+      { label: "Otra pregunta", next: "faq" },
+      { label: "Cotizar un servicio", next: "start" },
+      { label: "Hablar con una persona", next: "human" },
+    ],
+  },
+  faq_horario: {
+    id: "faq_horario",
+    mood: "feliz",
+    say: `Nuestro horario de oficina es ${site.officeHours.toLowerCase()}. Respondemos las solicitudes ${site.responseTime}. Fuera de ese horario, su solicitud queda registrada y la contactamos el siguiente día hábil. Si es una emergencia, llámenos al ${site.phone.display}.`,
+    options: [
+      { label: "Otra pregunta", next: "faq" },
+      { label: "Hablar con una persona", next: "human" },
+    ],
+  },
+  faq_cobertura: {
+    id: "faq_cobertura",
+    mood: "feliz",
+    say: "Atendemos en todo el país. Nuestra base está en el Caribe colombiano (Atlántico, Bolívar, Magdalena, Cesar, Córdoba y Sucre), donde la respuesta es más rápida.",
+    options: [
+      { label: "Otra pregunta", next: "faq" },
+      { label: "Cotizar un servicio", next: "start" },
+    ],
+  },
+  faq_cotizar: {
+    id: "faq_cotizar",
+    mood: "pensativo",
+    say: "El precio depende de cada instalación, por eso un ingeniero revisa su caso antes de cotizar. Usted me cuenta qué necesita, en qué ciudad y para cuándo, y un ingeniero lo contacta.",
+    options: [
+      { label: "Dejar mis datos", next: "start" },
+      { label: "Otra pregunta", next: "faq" },
+      { label: "Hablar con una persona", next: "human" },
+    ],
+  },
+  faq_personal: {
+    id: "faq_personal",
+    mood: "feliz",
+    say: "Nuestro personal cuenta con matrícula profesional CONTE vigente.",
+    options: [
+      { label: "Otra pregunta", next: "faq" },
+      { label: "Cotizar un servicio", next: "start" },
+    ],
+  },
+  faq_falla: {
+    id: "faq_falla",
+    mood: "serio",
+    say: "Si hay fuego, personas lesionadas o cables en el suelo, aléjese del área, no toque la instalación y llame al 123. Si el corte es de todo su sector, es una falla de la red pública y debe reportarla a su operador de red. Si la falla es solo en su instalación, puedo registrarla para que lo contactemos.",
+    options: [
+      { label: "Reportar una emergencia", next: "em1", tone: "emergency" },
+      { label: "Otra pregunta", next: "faq" },
     ],
   },
   price: {

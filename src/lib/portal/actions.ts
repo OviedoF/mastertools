@@ -8,6 +8,11 @@ import { hashPassword, tempPassword } from "./password";
 import { one, query, tx } from "./db";
 import { AJUSTES, getSetting, guardarAjuste, quitarAjuste } from "@/lib/settings";
 import { ga4Configured, olvidarTrafico, trafico } from "./ga4";
+import { crearAvisos } from "./avisos";
+import { responderManta } from "./manta-faq";
+import type { RespuestaManta } from "./manta-preguntas";
+import { ejecutarRecordatorios } from "./recordatorios";
+import { avisarWhatsApp, whatsappConfigurado } from "@/lib/whatsapp";
 import { CIERRE, FLUJO, ROLES, type Estado, type Rol, type Tipo } from "./model";
 
 const str = (f: FormData, k: string, max = 2000) => String(f.get(k) ?? "").trim().slice(0, max);
@@ -96,6 +101,14 @@ export async function asignarAction(f: FormData) {
       id, u.id, JSON.stringify({ a: quien?.nombre ?? null }),
     ]);
   });
+  if (quien && destino && destino !== u.id) {
+    await crearAvisos([destino], {
+      tipo: "asignacion",
+      titulo: `Caso #${c.numero} asignado a usted`,
+      detalle: [c.nombre, c.servicio].filter(Boolean).join(" · ") || undefined,
+      solicitud: id,
+    });
+  }
   if (quien && destino !== u.id) {
     const base = process.env.NEXT_PUBLIC_SITE_URL || "";
     const titulo = `Caso #${c.numero} asignado a usted`;
@@ -249,8 +262,73 @@ export async function probarConexionAction(_: FormState, f: FormData): Promise<F
       const r = await probarCorreo();
       return r.ok ? { ok: r.detalle } : { error: r.detalle };
     }
+    if (que === "whatsapp") {
+      if (!(await whatsappConfigurado())) return { error: "Faltan datos de WhatsApp (número, token, plantilla o destinatarios)." };
+      const r = await avisarWhatsApp("Mensaje de prueba desde el portal de Master Tools. No requiere ninguna acción.");
+      if (r.errores.length) return { error: `Se enviaron ${r.enviados}; fallaron: ${r.errores.join(" | ")}` };
+      return { ok: `Mensaje de prueba enviado a ${r.enviados} ${r.enviados === 1 ? "número" : "números"}.` };
+    }
+    if (que === "recordatorio") {
+      const r = await ejecutarRecordatorios({ forzar: true });
+      return { ok: r.ejecutado ? `Listo: ${r.seguimientos} seguimientos vencidos, ${r.correos} correos enviados.` : (r.motivo ?? "No se ejecutó.") };
+    }
   } catch (e) {
     return { error: (e as Error).message };
   }
   return { error: "Prueba desconocida." };
+}
+
+/* ----------------------------- avisos ----------------------------- */
+
+export async function marcarAvisosLeidosAction() {
+  const u = await currentUser();
+  if (!u) redirect("/portal/acceso");
+  await query("update avisos set leido = true where usuario = $1 and not leido", [u.id]);
+  revalidatePath("/portal", "layout");
+}
+
+/* ----------------------------- vistas guardadas ----------------------------- */
+
+const CLAVES_VISTA = ["q", "tipo", "estado", "responsable", "servicio", "ciudad", "desde", "hasta", "vencidas"];
+
+export async function guardarVistaAction(f: FormData) {
+  const u = await currentUser();
+  if (!u) redirect("/portal/acceso");
+  const nombre = str(f, "nombre", 40);
+  const origen = new URLSearchParams(str(f, "filtros", 600));
+  const limpio = new URLSearchParams();
+  for (const k of CLAVES_VISTA) {
+    const v = origen.get(k);
+    if (v) limpio.set(k, v.slice(0, 120));
+  }
+  const filtros = limpio.toString();
+  if (!nombre || !filtros) return;
+  const { count } = (await one<{ count: string }>("select count(*) from vistas where usuario = $1", [u.id])) ?? { count: "0" };
+  if (Number(count) >= 12) return;
+  await query(
+    `insert into vistas (usuario, nombre, filtros) values ($1, $2, $3)
+     on conflict (usuario, nombre) do update set filtros = excluded.filtros`,
+    [u.id, nombre, filtros],
+  );
+  revalidatePath("/portal");
+}
+
+export async function borrarVistaAction(f: FormData) {
+  const u = await currentUser();
+  if (!u) redirect("/portal/acceso");
+  await query("delete from vistas where id = $1 and usuario = $2", [Number(str(f, "id")), u.id]);
+  revalidatePath("/portal");
+}
+
+/* ----------------------------- Manta: preguntas predefinidas ----------------------------- */
+
+export async function preguntarMantaAction(id: string): Promise<RespuestaManta> {
+  const u = await currentUser();
+  if (!u) return { texto: "Su sesión venció. Vuelva a ingresar." };
+  try {
+    return await responderManta(id, { id: u.id, rol: u.rol });
+  } catch (e) {
+    console.error("[manta]", (e as Error).message);
+    return { texto: "No pude consultar la información en este momento. Intente de nuevo en un momento." };
+  }
 }

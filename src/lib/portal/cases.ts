@@ -1,5 +1,6 @@
 import "server-only";
 import { dbConfigured, one, query } from "./db";
+import { avisarSolicitudNueva } from "./avisos";
 import { CIERRE, PLAZO_PRIMER_CONTACTO_H, type Estado, type Tipo } from "./model";
 
 /* ------------------------------------------------------------------ */
@@ -33,6 +34,7 @@ export async function saveCase(c: NewCase): Promise<{ id: string; numero: number
       );
       await query("insert into eventos (solicitud, tipo, detalle) values ($1,'adjunto',$2)", [row.id, JSON.stringify({ nombre: c.adjunto.filename })]);
     }
+    await avisarSolicitudNueva({ id: row.id, numero: Number(row.numero), tipo: c.tipo, nombre: c.nombre, servicio: c.servicio, ciudad: c.ciudad, falla: c.falla });
     return { id: row.id, numero: Number(row.numero) };
   } catch (e) {
     console.error("[portal] no se pudo guardar la solicitud:", (e as Error).message);
@@ -67,7 +69,7 @@ export type CaseRow = {
 export const PAGE_SIZE = 25;
 const cerrados = CIERRE.map((e) => `'${e}'`).join(",");
 
-const VENCIDA = `(s.primer_contacto_en is null and s.cerrada_en is null and s.estado = 'nueva' and
+export const VENCIDA = `(s.primer_contacto_en is null and s.cerrada_en is null and s.estado = 'nueva' and
   s.creada_en < now() - make_interval(hours => case s.tipo when 'emergencia' then ${PLAZO_PRIMER_CONTACTO_H.emergencia} else ${PLAZO_PRIMER_CONTACTO_H.cotizacion} end))`;
 
 export async function listCases(f: Filtros, userId: string): Promise<{ rows: CaseRow[]; total: number }> {

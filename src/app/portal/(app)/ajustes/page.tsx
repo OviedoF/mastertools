@@ -77,6 +77,18 @@ export default async function Ajustes() {
               {g === "correo" && (
                 <div className="p-5"><ProbarForm que="correo" etiqueta="Probar conexión con el correo" /></div>
               )}
+              {g === "whatsapp" && (
+                <div className="p-5">
+                  <ProbarForm que="whatsapp" etiqueta="Enviar mensaje de prueba por WhatsApp" />
+                  <p className="mt-2 text-xs text-gris">Envía un mensaje real de prueba a los números configurados.</p>
+                </div>
+              )}
+              {g === "avisos" && (
+                <div className="p-5">
+                  <ProbarForm que="recordatorio" etiqueta="Enviar ahora el recordatorio de seguimientos" />
+                  <p className="mt-2 text-xs text-gris">El recordatorio sale solo todos los días a las 8:00. Este botón lo envía ya, a cada responsable con seguimientos vencidos y a gerencia.</p>
+                </div>
+              )}
             </div>
           </section>
         );

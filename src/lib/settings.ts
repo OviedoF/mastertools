@@ -25,7 +25,7 @@ export type AjusteDef = {
   validar?: (v: string) => string | null;
 };
 
-export type GrupoId = "analytics" | "correo" | "avisos" | "acceso";
+export type GrupoId = "analytics" | "correo" | "avisos" | "whatsapp" | "acceso";
 
 export const GRUPOS: Record<GrupoId, { titulo: string; descripcion: string }> = {
   analytics: {
@@ -39,6 +39,10 @@ export const GRUPOS: Record<GrupoId, { titulo: string; descripcion: string }> = 
   avisos: {
     titulo: "Destinatarios y conexiones",
     descripcion: "A quién le llegan las solicitudes y a qué sistema externo se reenvían.",
+  },
+  whatsapp: {
+    titulo: "Aviso de emergencias por WhatsApp",
+    descripcion: "Cada emergencia nueva se avisa por WhatsApp al equipo de turno, con la API oficial de Meta. Guía en docs/WHATSAPP.md.",
   },
   acceso: {
     titulo: "Acceso al portal",
@@ -85,6 +89,26 @@ export const AJUSTES: AjusteDef[] = [
     clave: "LEAD_WEBHOOK_URL", grupo: "avisos", etiqueta: "Webhook externo (opcional)", secreto: true,
     ayuda: "Si se define, cada solicitud también se envía como JSON a esa dirección (Zoho, Make, Zapier). Se guarda cifrada porque la URL suele llevar una clave.",
     placeholder: "https://…", validar: (v) => (/^https:\/\/\S+$/.test(v) ? null : "Debe empezar por https://"),
+  },
+  {
+    clave: "WHATSAPP_PHONE_ID", grupo: "whatsapp", etiqueta: "ID del número de WhatsApp Business",
+    ayuda: "Meta for Developers > su app > WhatsApp > Configuración de la API: «Identificador del número de teléfono».", placeholder: "109876543210987",
+    validar: (v) => (/^\d{8,}$/.test(v) ? null : "Solo números."),
+  },
+  {
+    clave: "WHATSAPP_TOKEN", grupo: "whatsapp", etiqueta: "Token de acceso permanente", secreto: true,
+    ayuda: "Token de un usuario del sistema con permiso whatsapp_business_messaging. No use el token temporal de 24 horas.", validar: noVacio,
+  },
+  {
+    clave: "WHATSAPP_TEMPLATE", grupo: "whatsapp", etiqueta: "Nombre de la plantilla aprobada",
+    ayuda: "Plantilla de categoría Utilidad con una variable: «Emergencia nueva en Master Tools: {{1}}. Ábrala en el portal para atenderla.»",
+    placeholder: "aviso_emergencia", validar: (v) => (/^[a-z0-9_]{1,512}$/.test(v) ? null : "Solo minúsculas, números y guion bajo."),
+  },
+  { clave: "WHATSAPP_LANG", grupo: "whatsapp", etiqueta: "Idioma de la plantilla", ayuda: "Código del idioma con el que se aprobó. Por defecto: es.", placeholder: "es", validar: (v) => (/^[a-z]{2}(_[A-Z]{2})?$/.test(v) ? null : "Por ejemplo: es o es_CO.") },
+  {
+    clave: "WHATSAPP_TO", grupo: "whatsapp", etiqueta: "Números que reciben el aviso",
+    ayuda: "Con indicativo de país y sin signos, separados por coma. Cada número debe haber aceptado recibir mensajes.", placeholder: "573001234567, 573009876543",
+    validar: (v) => (v.split(",").every((n) => /^\d{10,15}$/.test(n.trim())) ? null : "Solo números con indicativo, por ejemplo 573001234567."),
   },
   { clave: "PORTAL_ALLOWED_DOMAINS", grupo: "acceso", etiqueta: "Dominios permitidos para usuarios", ayuda: "Separados por coma. Solo correos de esos dominios pueden tener usuario.", placeholder: "mastertools.tech", validar: noVacio },
 ];

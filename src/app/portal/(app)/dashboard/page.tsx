@@ -164,6 +164,13 @@ const PASOS: Record<string, string> = {
   em3_otro: "Emergencia: descripción",
   em4: "Emergencia: nombre",
   em5: "Emergencia: teléfono",
+  faq: "Preguntas frecuentes (consulta)",
+  faq_servicios: "Preguntas frecuentes (consulta)",
+  faq_horario: "Preguntas frecuentes (consulta)",
+  faq_cobertura: "Preguntas frecuentes (consulta)",
+  faq_cotizar: "Preguntas frecuentes (consulta)",
+  faq_personal: "Preguntas frecuentes (consulta)",
+  faq_falla: "Preguntas frecuentes (consulta)",
   price: "Preguntó por el precio",
   human: "Pidió hablar con una persona",
 };

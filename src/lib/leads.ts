@@ -3,6 +3,7 @@ import { site } from "@/content/site";
 import { saveCase } from "./portal/cases";
 import { fieldsTable, layout, mailConfigured, sendMail, type Attachment } from "./mail";
 import { getSetting } from "./settings";
+import { avisarWhatsApp } from "./whatsapp";
 
 /**
  * Una solicitud, venga del formulario o de Manta. Es el contrato que en la
@@ -170,6 +171,24 @@ Equipo Master Tools`;
       if (!res.ok) result.errors.push(`webhook: HTTP ${res.status}`);
     } catch (e) {
       result.errors.push(`webhook: ${(e as Error).message}`);
+    }
+  }
+
+  // 4) Emergencias: aviso por WhatsApp al equipo de turno (si está configurado en Ajustes)
+  if (lead.kind === "emergency") {
+    const resumen = [
+      saved ? `#${saved.numero}` : "",
+      lead.nombre,
+      lead.telefono ? `tel. ${lead.telefono}` : "",
+      lead.ciudad,
+      lead.falla,
+      lead.riesgo ? `riesgo: ${lead.riesgo}` : "",
+    ].filter(Boolean).join(" · ");
+    try {
+      const w = await avisarWhatsApp(resumen);
+      for (const e of w.errores) result.errors.push(`whatsapp: ${e}`);
+    } catch (e) {
+      result.errors.push(`whatsapp: ${(e as Error).message}`);
     }
   }
 

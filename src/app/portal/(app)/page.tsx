@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { AlertTriangle, Search } from "lucide-react";
 import { EstadoBadge, MantaAvatar, boton, botonSuave, fechaHora, hace, input, tarjeta } from "@/components/portal/ui";
+import { borrarVistaAction, guardarVistaAction } from "@/lib/portal/actions";
 import { requireUser } from "@/lib/portal/auth";
+import { query } from "@/lib/portal/db";
 import { PAGE_SIZE, listCases, opcionesFiltro, resumen, type Filtros } from "@/lib/portal/cases";
 import { mantaBrief } from "@/lib/portal/manta";
 import { ESTADOS, ORIGENES, TIPOS } from "@/lib/portal/model";
@@ -19,7 +21,12 @@ export default async function Bandeja({ searchParams }: { searchParams: Promise<
     servicio: first(sp.servicio), ciudad: first(sp.ciudad), desde: first(sp.desde), hasta: first(sp.hasta),
     vencidas: first(sp.vencidas), page: Number(first(sp.page)) || 1,
   };
-  const [{ rows, total }, r, opciones] = await Promise.all([listCases(f, u.id), resumen(u.id), opcionesFiltro()]);
+  const [{ rows, total }, r, opciones, misVistas] = await Promise.all([
+    listCases(f, u.id),
+    resumen(u.id),
+    opcionesFiltro(),
+    query<{ id: string; nombre: string; filtros: string }>("select id::text, nombre, filtros from vistas where usuario = $1 order by nombre", [u.id]),
+  ]);
   const brief = mantaBrief(r, u.nombre);
 
   const hayFiltros = Object.entries(f).some(([k, v]) => k !== "page" && v);
@@ -34,6 +41,10 @@ export default async function Bandeja({ searchParams }: { searchParams: Promise<
     const s = p.toString();
     return s ? `/portal?${s}` : "/portal";
   };
+
+  const filtrosActuales = new URLSearchParams(
+    Object.entries({ q: f.q, tipo: f.tipo, estado: f.estado, responsable: f.responsable, servicio: f.servicio, ciudad: f.ciudad, desde: f.desde, hasta: f.hasta, vencidas: f.vencidas }).filter(([, v]) => v) as [string, string][],
+  ).toString();
 
   const vistas = [
     { label: "Mis casos", q: "?responsable=mios&estado=abiertas", n: r.mis_casos },
@@ -92,6 +103,19 @@ export default async function Bandeja({ searchParams }: { searchParams: Promise<
               {v.n ? <span className="rounded-full bg-claro px-2 text-xs">{v.n}</span> : null}
             </Link>
           ))}
+          {misVistas.map((v) => (
+            <span key={v.id} className="inline-flex overflow-hidden rounded-lg border border-profundo/40 bg-white">
+              <Link href={`/portal?${v.filtros}`} className="inline-flex min-h-10 items-center px-3 text-sm font-semibold text-profundo hover:bg-claro/60">
+                {v.nombre}
+              </Link>
+              <form action={borrarVistaAction}>
+                <input type="hidden" name="id" value={v.id} />
+                <button className="inline-flex min-h-10 items-center border-l border-profundo/20 px-2.5 text-noche/50 hover:bg-red-50 hover:text-red-700" aria-label={`Borrar la búsqueda ${v.nombre}`} title="Borrar">
+                  ×
+                </button>
+              </form>
+            </span>
+          ))}
         </div>
         <form className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4" action="/portal">
           <label className="relative sm:col-span-2">
@@ -145,6 +169,14 @@ export default async function Bandeja({ searchParams }: { searchParams: Promise<
             <button className={boton}>Filtrar</button>
           </div>
         </form>
+        {hayFiltros && (
+          <form action={guardarVistaAction} className="mt-3 flex flex-wrap items-center gap-2 border-t border-noche/10 pt-3">
+            <input type="hidden" name="filtros" value={filtrosActuales} />
+            <label className="sr-only" htmlFor="nombre-vista">Nombre de la búsqueda</label>
+            <input id="nombre-vista" name="nombre" required maxLength={40} placeholder="Nombre para esta búsqueda" className={`${input} max-w-xs`} />
+            <button className={botonSuave}>Guardar esta búsqueda</button>
+          </form>
+        )}
       </section>
 
       {/* Lista */}
