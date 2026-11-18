@@ -31,24 +31,25 @@ export default async function PortalLayout({ children }: { children: ReactNode }
             <Image src="/marca/logo/logo_master_tools_negativo_sin_SAS.svg" alt="Master Tools" width={140} height={36} className="h-8 w-auto" />
             <span className="eyebrow text-master">Portal</span>
           </Link>
-          <nav aria-label="Principal" className="flex items-center gap-1 text-sm font-semibold">
-            <Link href="/portal" className="rounded-lg px-3 py-2 hover:bg-white/10">
+          {/* En celular el menú pasa a una fila propia con desplazamiento lateral, para que no se corten las opciones. */}
+          <nav aria-label="Principal" className="order-last -mx-5 flex w-[calc(100%+2.5rem)] items-center gap-1 overflow-x-auto px-5 pb-1 text-sm font-semibold whitespace-nowrap [scrollbar-width:none] lg:order-none lg:mx-0 lg:w-auto lg:px-0 lg:pb-0">
+            <Link href="/portal" className="shrink-0 rounded-lg px-3 py-2 hover:bg-white/10">
               Solicitudes
             </Link>
             {puedeAdministrar(u.rol) && (
               <>
-                <Link href="/portal/dashboard" className="rounded-lg px-3 py-2 hover:bg-white/10">
+                <Link href="/portal/dashboard" className="shrink-0 rounded-lg px-3 py-2 hover:bg-white/10">
                   Dashboard
                 </Link>
-                <Link href="/portal/usuarios" className="rounded-lg px-3 py-2 hover:bg-white/10">
+                <Link href="/portal/usuarios" className="shrink-0 rounded-lg px-3 py-2 hover:bg-white/10">
                   Usuarios
                 </Link>
-                <Link href="/portal/ajustes" className="rounded-lg px-3 py-2 hover:bg-white/10">
+                <Link href="/portal/ajustes" className="shrink-0 rounded-lg px-3 py-2 hover:bg-white/10">
                   Ajustes
                 </Link>
               </>
             )}
-            <Link href="/portal/guia" className="rounded-lg px-3 py-2 hover:bg-white/10">
+            <Link href="/portal/guia" className="shrink-0 rounded-lg px-3 py-2 hover:bg-white/10">
               Guía
             </Link>
           </nav>
