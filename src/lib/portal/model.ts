@@ -8,8 +8,8 @@ export type Estado =
 
 export const ROLES: Record<Rol, { label: string; descripcion: string }> = {
   gerencia: { label: "Gerencia", descripcion: "Todo: casos, usuarios y dashboard" },
-  comercial: { label: "Comercial", descripcion: "Gestiona cotizaciones y chats; consulta emergencias" },
-  operaciones: { label: "Operaciones", descripcion: "Gestiona emergencias; consulta cotizaciones" },
+  comercial: { label: "Comercial", descripcion: "Gestiona cotizaciones y emergencias (comunicación y seguimiento)" },
+  operaciones: { label: "Operaciones", descripcion: "Gestiona cotizaciones y emergencias, y ejecuta la atención técnica" },
   lectura: { label: "Lectura", descripcion: "Solo consulta" },
 };
 
@@ -38,11 +38,13 @@ export const FLUJO: Record<Tipo, Estado[]> = {
 export const CIERRE: Estado[] = ["ganada", "perdida", "facturada", "descartada"];
 export const esCerrado = (e: Estado) => CIERRE.includes(e);
 
-export function puedeGestionar(rol: Rol, tipo: Tipo): boolean {
-  if (rol === "gerencia") return true;
-  if (rol === "comercial") return tipo === "cotizacion";
-  if (rol === "operaciones") return tipo === "emergencia";
-  return false;
+/**
+ * Comercial y Operaciones gestionan ambos tipos de solicitud (decisión de Master Tools, 16/11/2026):
+ * la diferencia entre ellos es operativa (solo Operaciones ejecuta la atención técnica), no de permisos.
+ * Lectura solo consulta. `tipo` se conserva para poder diferenciar permisos más adelante.
+ */
+export function puedeGestionar(rol: Rol, _tipo: Tipo): boolean {
+  return rol === "gerencia" || rol === "comercial" || rol === "operaciones";
 }
 
 export const puedeAdministrar = (rol: Rol) => rol === "gerencia";

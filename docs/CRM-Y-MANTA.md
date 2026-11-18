@@ -164,7 +164,7 @@ decide después, con cifras reales de cuánta gente usa el chat y en qué paso a
 
 | Evento | Canal | Destinatario |
 | --- | --- | --- |
-| Solicitud nueva | Correo (ya existe) y aviso dentro del portal | Comercial; emergencias también a operaciones |
+| Solicitud nueva | Correo (ya existe) y aviso dentro del portal | Gerencia, comercial y operaciones |
 | Asignación | Correo y aviso en el portal | El responsable asignado |
 | Seguimiento vencido | Correo diario a las 8:00 con la lista y aviso en el portal | Cada responsable; resumen a gerencia |
 | Emergencia nueva | Además, WhatsApp al responsable de turno | Requiere WhatsApp Business API o un proveedor (Twilio, 360dialog). Es el único canal con costo y trámite propio; se puede dejar para después |
@@ -178,8 +178,8 @@ tres que más se usan ("mis casos", "nuevas sin asignar", "emergencias abiertas"
 | Rol | Puede |
 | --- | --- |
 | Gerencia | Todo, incluido crear usuarios y ver el dashboard |
-| Comercial | Ver y gestionar cotizaciones y chats; ver emergencias |
-| Operaciones | Ver y gestionar emergencias; ver cotizaciones |
+| Comercial | Gestionar cotizaciones y emergencias (comunicación y seguimiento). Decisión de Master Tools del 16/11/2026: mismo nivel que Operaciones |
+| Operaciones | Gestionar cotizaciones y emergencias; además ejecuta la atención técnica |
 | Lectura | Solo consultar |
 
 Acceso con correo y contraseña o con enlace por correo (sin contraseña), sesión que expira,

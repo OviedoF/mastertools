@@ -64,7 +64,7 @@ async function revisar() {
       paraQue: "Cada persona entra con su propio correo y ve lo que le corresponde.",
       como: [
         "Haga una lista de las personas que van a usar el portal.",
-        "Para cada una, decida su papel: Gerencia (ve todo, incluido el dashboard, los usuarios y los ajustes), Comercial (atiende cotizaciones), Operaciones (atiende emergencias) o Lectura (solo consulta).",
+        "Para cada una, decida su papel: Gerencia (ve todo, incluido el dashboard, los usuarios y los ajustes), Comercial y Operaciones (ambos gestionan cotizaciones y emergencias; solo Operaciones ejecuta la atención técnica) o Lectura (solo consulta).",
         "Use siempre correos de la empresa (terminados en @mastertools.tech).",
       ],
       enviar: ["Por cada persona: nombre completo, correo de la empresa y papel (Gerencia, Comercial, Operaciones o Lectura)."],

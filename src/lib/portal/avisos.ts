@@ -22,11 +22,11 @@ export async function crearAvisos(
   }
 }
 
-/** Quién se entera de una solicitud nueva: comercial y gerencia; en emergencias también operaciones. Lectura no recibe avisos. */
+/** Quién se entera de una solicitud nueva: gerencia, comercial y operaciones (los tres gestionan). Lectura no recibe avisos. */
 export async function avisarSolicitudNueva(c: { id: string; numero: number; tipo: Tipo; nombre?: string; servicio?: string; ciudad?: string; falla?: string }) {
   if (!dbConfigured()) return;
   try {
-    const roles = c.tipo === "emergencia" ? ["gerencia", "comercial", "operaciones"] : ["gerencia", "comercial"];
+    const roles = ["gerencia", "comercial", "operaciones"];
     const rows = await query<{ id: string }>("select id from usuarios where activo and rol = any($1::text[])", [roles]);
     const quien = [c.nombre, c.ciudad].filter(Boolean).join(" · ");
     await crearAvisos(rows.map((r) => r.id), {

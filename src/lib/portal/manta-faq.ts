@@ -112,7 +112,7 @@ export async function responderManta(id: string, u: { id: string; rol: Rol }): P
     case "vistas":
       return { texto: "En la bandeja, aplique los filtros que necesite. Debajo del filtro aparece «Guardar esta búsqueda»: póngale un nombre y queda como botón rápido, solo para usted. Puede borrarla cuando quiera." };
     case "avisos":
-      return { texto: "La campana del menú junta sus avisos: solicitudes nuevas (las emergencias llegan a comercial, operaciones y gerencia), casos que le asignan y seguimientos vencidos. Además, todos los días a las 8:00 recibe un correo con sus seguimientos vencidos, y gerencia recibe un resumen.", enlace: { label: "Abrir mis avisos", href: "/portal/avisos" } };
+      return { texto: "La campana del menú junta sus avisos: solicitudes nuevas (llegan a gerencia, comercial y operaciones), casos que le asignan y seguimientos vencidos. Además, todos los días a las 8:00 recibe un correo con sus seguimientos vencidos, y gerencia recibe un resumen.", enlace: { label: "Abrir mis avisos", href: "/portal/avisos" } };
     case "roles":
       return { texto: (Object.keys(ROLES) as Rol[]).map((r) => `${ROLES[r].label}: ${ROLES[r].descripcion}.`).join("\n") + `\n\nSu rol es ${ROLES[u.rol].label}.` };
     case "plazos":

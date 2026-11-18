@@ -101,7 +101,7 @@ export default async function Guia() {
         )}
         {!admin && u.rol !== "lectura" && (
           <p className="text-sm text-noche/70">
-            {u.rol === "comercial" ? "Las emergencias las atiende Operaciones: usted las puede ver, pero no modificarlas." : "Las cotizaciones las atiende Comercial: usted las puede ver, pero no modificarlas."}
+            Comercial y Operaciones gestionan por igual cotizaciones y emergencias: contactar al cliente, cambiar estados, anotar y hacer seguimiento. La atención técnica en sitio la coordina y ejecuta solo Operaciones.
           </p>
         )}
       </Seccion>
@@ -129,7 +129,7 @@ export default async function Guia() {
           <>La campana muestra los avisos sin leer: solicitudes nuevas, casos que le asignan y seguimientos vencidos. Toque uno para ir directo al caso.</>,
           <>«Marcar todos como leídos» limpia la lista de una vez.</>,
           <>Cada mañana a las 8:00 recibe un resumen con sus seguimientos y casos vencidos.</>,
-          <>Las emergencias nuevas avisan a Gerencia, Comercial y Operaciones. Las cotizaciones, a Gerencia y Comercial.</>,
+          <>Cada solicitud nueva, sea cotización o emergencia, avisa a Gerencia, Comercial y Operaciones.</>,
         ]} />
       </Seccion>
 
