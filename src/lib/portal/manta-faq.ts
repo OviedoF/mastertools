@@ -116,7 +116,7 @@ export async function responderManta(id: string, u: { id: string; rol: Rol }): P
     case "roles":
       return { texto: (Object.keys(ROLES) as Rol[]).map((r) => `${ROLES[r].label}: ${ROLES[r].descripcion}.`).join("\n") + `\n\nSu rol es ${ROLES[u.rol].label}.` };
     case "plazos":
-      return { texto: `Una cotización debe contactarse en máximo ${PLAZO_PRIMER_CONTACTO_H.cotizacion} horas y una emergencia en ${PLAZO_PRIMER_CONTACTO_H.emergencia} hora. Pasado ese tiempo sin primer contacto, el caso aparece como vencido.` };
+      return { texto: `Una cotización debe contactarse en máximo ${PLAZO_PRIMER_CONTACTO_H.cotizacion} horas y una emergencia en ${PLAZO_PRIMER_CONTACTO_H.emergencia} horas. Pasado ese tiempo sin primer contacto, el caso aparece como vencido.` };
   }
   return { texto: "No tengo una respuesta para esa pregunta. Elija una de la lista." };
 }

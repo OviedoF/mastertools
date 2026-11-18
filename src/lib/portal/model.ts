@@ -49,7 +49,7 @@ export function puedeGestionar(rol: Rol, _tipo: Tipo): boolean {
 
 export const puedeAdministrar = (rol: Rol) => rol === "gerencia";
 
-/** Horas para el primer contacto antes de marcar un caso como vencido. A confirmar con el cliente. */
-export const PLAZO_PRIMER_CONTACTO_H: Record<Tipo, number> = { cotizacion: 24, emergencia: 1 };
+/** Horas para el primer contacto antes de marcar un caso como vencido. Confirmado por Master Tools el 18/11/2026. */
+export const PLAZO_PRIMER_CONTACTO_H: Record<Tipo, number> = { cotizacion: 24, emergencia: 12 };
 
 export const ORIGENES = { form: "Formulario", manta: "Manta (chat)" } as const;

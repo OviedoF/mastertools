@@ -31,7 +31,7 @@ Esto no aparece en el portal: es lo que hace el equipo de desarrollo para que lo
 - [ ] Portal en celular.
 - [ ] Descarga de un adjunto: que el archivo abra bien.
 - [ ] Un usuario de cada rol: ve solo lo que le corresponde.
-- [ ] Plazos de primer contacto (`PLAZO_PRIMER_CONTACTO_H` en `src/lib/portal/model.ts`): hoy 24 h cotización, 1 h emergencia, pendientes de confirmar con el cliente.
+- [ ] Plazos de primer contacto (`PLAZO_PRIMER_CONTACTO_H` en `src/lib/portal/model.ts`): 24 h cotización, 12 h emergencia, confirmados por David el 18/11/2026.
 
 ## Qué hacer cuando el cliente le pase cada dato
 

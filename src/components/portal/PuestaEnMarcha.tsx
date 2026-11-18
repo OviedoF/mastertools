@@ -108,7 +108,7 @@ async function revisar() {
       id: "plazos", titulo: "Plazos para contestar a un cliente", auto: false,
       paraQue: "El portal marca en rojo una solicitud que lleva demasiado tiempo sin atender.",
       como: [
-        `Hoy el plazo es de ${PLAZO_PRIMER_CONTACTO_H.cotizacion} horas para cotizaciones y de ${PLAZO_PRIMER_CONTACTO_H.emergencia} hora para emergencias.`,
+        `Hoy el plazo es de ${PLAZO_PRIMER_CONTACTO_H.cotizacion} horas para cotizaciones y de ${PLAZO_PRIMER_CONTACTO_H.emergencia} horas para emergencias.`,
         "Piense si el equipo puede cumplirlos de verdad. Un plazo que nunca se cumple deja todo en rojo y deja de servir.",
       ],
       enviar: ["Si los plazos le sirven así, o cuáles quiere en su lugar."],

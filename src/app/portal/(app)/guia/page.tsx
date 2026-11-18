@@ -85,7 +85,7 @@ export default async function Guia() {
           <>
             <p className="text-sm text-noche/80">Abra la solicitud. Encontrará el bloque <strong>Gestión</strong> para actuar sobre ella, y más abajo o al lado los datos, las notas y el historial.</p>
             <Pasos items={[
-              <><strong>Contacte al cliente</strong> por teléfono, WhatsApp o correo. El plazo para el primer contacto es de {PLAZO_PRIMER_CONTACTO_H.cotizacion} horas en cotizaciones y {PLAZO_PRIMER_CONTACTO_H.emergencia} hora en emergencias; pasado el plazo, el caso se marca como vencido.</>,
+              <><strong>Contacte al cliente</strong> por teléfono, WhatsApp o correo. El plazo para el primer contacto es de {PLAZO_PRIMER_CONTACTO_H.cotizacion} horas en cotizaciones y {PLAZO_PRIMER_CONTACTO_H.emergencia} horas en emergencias; pasado el plazo, el caso se marca como vencido.</>,
               <><strong>Cambie el estado</strong>: en Gestión elija el estado nuevo, escriba el motivo si quiere y pulse «Cambiar estado». Todo queda en el historial.</>,
               <><strong>Asigne un responsable</strong> con «Asignar». A esa persona le llega un aviso.</>,
               <><strong>Anote lo que pase</strong> en Notas («Agregar nota»): qué dijo el cliente, qué se acordó, qué falta.</>,
