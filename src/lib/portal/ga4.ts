@@ -56,7 +56,14 @@ async function accessToken(): Promise<string> {
 type Row = { dimensionValues?: { value: string }[]; metricValues?: { value: string }[] };
 type Report = { rows?: Row[] };
 
+/** GA4 admite como máximo 5 informes por lote: se parte en trozos de 5 y se concatenan en el mismo orden. */
 async function batch(requests: object[]): Promise<Report[]> {
+  const out: Report[] = [];
+  for (let i = 0; i < requests.length; i += 5) out.push(...(await batchUnico(requests.slice(i, i + 5))));
+  return out;
+}
+
+async function batchUnico(requests: object[]): Promise<Report[]> {
   const { property } = await creds();
   const res = await fetch(`https://analyticsdata.googleapis.com/v1beta/properties/${property}:batchRunReports`, {
     method: "POST",
@@ -96,6 +103,21 @@ const TTL = 30 * 60 * 1000; // media hora: cuida la cuota de la API
 
 const f = (r: Row | undefined, i: number) => Number(r?.metricValues?.[i]?.value ?? 0);
 const dim = (r: Row, i = 0) => r.dimensionValues?.[i]?.value ?? "";
+
+/**
+ * GA4 solo devuelve los días con sesiones; el resto se rellena con 0 para que la serie tenga siempre `dias` puntos.
+ * Las fechas de GA4 van en la zona horaria de la propiedad (Colombia), por eso se generan en America/Bogota.
+ */
+function serieDiaria(dias: number, rows: Row[]): { dia: string; sesiones: number }[] {
+  const porFecha = new Map(rows.map((r) => [dim(r), f(r, 0)]));
+  const fmt = new Intl.DateTimeFormat("sv-SE", { timeZone: "America/Bogota", year: "numeric", month: "2-digit", day: "2-digit" });
+  const out: { dia: string; sesiones: number }[] = [];
+  for (let i = dias - 1; i >= 0; i--) {
+    const dia = fmt.format(new Date(Date.now() - i * 86_400_000)); // YYYY-MM-DD
+    out.push({ dia, sesiones: porFecha.get(dia.replace(/-/g, "")) ?? 0 });
+  }
+  return out;
+}
 
 export async function trafico(dias: number): Promise<Trafico> {
   const hit = cache.get(String(dias));
@@ -159,7 +181,7 @@ export async function trafico(dias: number): Promise<Trafico> {
     vistas: f(cur, 3), vistasAnt: f(prev, 3),
     duracion: f(cur, 4), duracionAnt: f(prev, 4),
     interaccion: f(cur, 5),
-    porDia: (dias_.rows ?? []).map((r) => ({ dia: `${dim(r).slice(0, 4)}-${dim(r).slice(4, 6)}-${dim(r).slice(6, 8)}`, sesiones: f(r, 0) })),
+    porDia: serieDiaria(dias, dias_.rows ?? []),
     paginas: (paginas.rows ?? []).map((r) => ({ ruta: dim(r), vistas: f(r, 0), usuarios: f(r, 1) })),
     fuentes: (fuentes.rows ?? []).map((r) => ({ canal: dim(r), sesiones: f(r, 0) })),
     dispositivos: (dispositivos.rows ?? []).map((r) => ({ tipo: dim(r), sesiones: f(r, 0) })),
