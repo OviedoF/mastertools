@@ -12,7 +12,7 @@ export type NewCase = {
   origen: "form" | "manta";
   nombre?: string; empresa?: string; telefono?: string; correo?: string; ciudad?: string; direccion?: string;
   servicio?: string; plazo?: string; mensaje?: string; falla?: string; riesgo?: string;
-  pagina?: string; conversacion?: string;
+  pagina?: string; conversacion?: string; conversacionId?: string;
   adjunto?: { filename: string; content: Buffer; contentType?: string };
 };
 
@@ -27,6 +27,15 @@ export async function saveCase(c: NewCase): Promise<{ id: string; numero: number
     );
     if (!row) return null;
     await query("insert into eventos (solicitud, tipo, detalle) values ($1,'creada',$2)", [row.id, JSON.stringify({ origen: c.origen })]);
+    if (c.conversacionId) {
+      // La conversación puede no haber llegado todavía: se crea y se enlaza en un solo paso.
+      await query(
+        `insert into conversaciones (id, paso, completa, solicitud, transcripcion) values ($1, 'enviada', true, $2, $3)
+         on conflict (id) do update set completa = true, solicitud = excluded.solicitud,
+           transcripcion = coalesce(conversaciones.transcripcion, excluded.transcripcion), actualizada_en = now()`,
+        [c.conversacionId, row.id, c.conversacion ?? null],
+      ).catch((e) => console.error("[portal] no se pudo enlazar la conversación:", (e as Error).message));
+    }
     if (c.adjunto) {
       await query(
         "insert into adjuntos (solicitud, nombre, tipo, tamano, datos) values ($1,$2,$3,$4,$5)",

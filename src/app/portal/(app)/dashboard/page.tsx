@@ -5,6 +5,7 @@ import { PuestaEnMarcha } from "@/components/portal/PuestaEnMarcha";
 import { MantaAvatar, tarjeta } from "@/components/portal/ui";
 import { requireAdmin } from "@/lib/portal/auth";
 import { ga4Configured, trafico, type Trafico } from "@/lib/portal/ga4";
+import { paso } from "@/lib/portal/manta-pasos";
 import { ESTADOS, type Estado } from "@/lib/portal/model";
 import { PERIODOS, estadisticas, periodoValido, type Conteo, type Dia, type Estadisticas } from "@/lib/portal/stats";
 
@@ -37,14 +38,19 @@ function Delta({ actual, anterior, invertir }: { actual: number; anterior: numbe
   );
 }
 
-function Kpi({ titulo, valor, pie, nota }: { titulo: string; valor: string; pie?: React.ReactNode; nota?: string }) {
-  return (
-    <div className={tarjeta}>
-      <p className="text-xs font-semibold tracking-wide text-gris uppercase">{titulo}</p>
+function Kpi({ titulo, valor, pie, nota, href }: { titulo: string; valor: string; pie?: React.ReactNode; nota?: React.ReactNode; href?: string }) {
+  const cuerpo = (
+    <>
+      <p className="text-xs font-semibold tracking-wide text-gris uppercase">{titulo}{href && <span className="ml-1 text-profundo" aria-hidden="true">→</span>}</p>
       <p className="font-display mt-1 text-3xl font-extrabold text-noche">{valor}</p>
       <div className="mt-1 min-h-5">{pie}</div>
       {nota && <p className="mt-1 text-xs text-gris">{nota}</p>}
-    </div>
+    </>
+  );
+  return href ? (
+    <Link href={href} className={clsx(tarjeta, "block transition hover:-translate-y-0.5 hover:shadow-card-hover")}>{cuerpo}</Link>
+  ) : (
+    <div className={tarjeta}>{cuerpo}</div>
   );
 }
 
@@ -144,38 +150,6 @@ function Linea({ datos, etiqueta }: { datos: { dia: string; sesiones: number }[]
   );
 }
 
-const PASOS: Record<string, string> = {
-  start: "Saludo: no eligió una opción",
-  other: "Menú de otros servicios",
-  notsure: "No supo qué elegir",
-  q_privacy: "Cotización: ciudad",
-  q2: "Cotización: pregunta técnica",
-  q2_otra: "Cotización: ciudad",
-  q2b: "Cotización: dato adicional",
-  q3: "Cotización: para cuándo",
-  q4: "Cotización: nombre y empresa",
-  q5: "Cotización: cómo contactarlo",
-  q5_tel: "Cotización: teléfono",
-  q5_mail: "Cotización: correo",
-  q6: "Cotización: confirmación",
-  em1: "Emergencia: riesgo inmediato",
-  em2: "Emergencia: ubicación",
-  em3: "Emergencia: qué pasa",
-  em3_alcance: "Emergencia: alcance del corte",
-  em3_otro: "Emergencia: descripción",
-  em4: "Emergencia: nombre",
-  em5: "Emergencia: teléfono",
-  faq: "Preguntas frecuentes (consulta)",
-  faq_servicios: "Preguntas frecuentes (consulta)",
-  faq_horario: "Preguntas frecuentes (consulta)",
-  faq_cobertura: "Preguntas frecuentes (consulta)",
-  faq_cotizar: "Preguntas frecuentes (consulta)",
-  faq_personal: "Preguntas frecuentes (consulta)",
-  faq_falla: "Preguntas frecuentes (consulta)",
-  price: "Preguntó por el precio",
-  human: "Pidió hablar con una persona",
-};
-const paso = (id: string) => PASOS[id] ?? `Servicio: ${id.replace(/_/g, " ")}`;
 
 function lectura(e: Estadisticas, t: Trafico | null): { mood: "feliz" | "contento" | "pensativo" | "serio"; texto: string } {
   const { actual: a, anterior: p } = e;
@@ -248,7 +222,7 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
             pie={a.horas_primer_contacto != null && p.horas_primer_contacto != null ? <Delta actual={a.horas_primer_contacto} anterior={p.horas_primer_contacto} invertir /> : undefined}
             nota="Tiempo medio desde que llega hasta que se atiende"
           />
-          <Kpi titulo="Vencidas ahora" valor={nf.format(e.vencidasAhora)} nota={`${e.abiertasAhora} casos abiertos en total`} />
+          <Kpi titulo="Vencidas ahora" valor={nf.format(e.vencidasAhora)} href="/portal?vencidas=1#lista" nota={`${e.abiertasAhora} casos abiertos en total`} />
         </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <Kpi titulo="Ganadas" valor={nf.format(a.ganadas)} pie={<Delta actual={a.ganadas} anterior={p.ganadas} />} />
@@ -305,9 +279,9 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
 
       <Seccion titulo="Chat de Manta" descripcion="Conversaciones iniciadas por los visitantes y dónde se quedan.">
         <div className="grid gap-4 lg:grid-cols-3">
-          <Kpi titulo="Conversaciones" valor={nf.format(e.chat.iniciadas)} />
+          <Kpi titulo="Conversaciones" valor={nf.format(e.chat.iniciadas)} href="/portal/conversaciones" nota="Ver cada conversación, también en vivo" />
           <Kpi titulo="Terminaron en solicitud" valor={nf.format(e.chat.completas)} nota={e.chat.iniciadas ? `${pct(e.chat.completas, e.chat.iniciadas)} de las conversaciones` : undefined} />
-          <Kpi titulo="Abandonadas" valor={nf.format(e.chat.abandonadas)} />
+          <Kpi titulo="Abandonadas" valor={nf.format(e.chat.abandonadas)} href="/portal/conversaciones?ver=abandonadas" />
         </div>
         <div className={tarjeta}>
           <h3 className="mb-3 font-semibold text-noche">En qué paso abandonan</h3>

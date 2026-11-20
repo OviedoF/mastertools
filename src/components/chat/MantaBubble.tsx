@@ -64,17 +64,26 @@ export function MantaBubble() {
   const transcriptRef = useRef<string>("");
   const panelId = useId();
 
-  // Registro de la conversación para medir en qué paso se abandona (sin guardar el texto escrito).
+  // Registro de la conversación mientras ocurre: el equipo la ve en el portal (Conversaciones), incluso en vivo,
+  // y se mide en qué paso se abandona. Una conversación dura mientras no se borren los mensajes.
   const sidRef = useRef("");
   const nodeIdRef = useRef("start");
   const doneRef = useRef(false);
+  const countRef = useRef(0);
   useEffect(() => {
     nodeIdRef.current = nodeId;
   }, [nodeId]);
   const sendConv = () => {
     if (!sidRef.current) return;
     try {
-      const body = JSON.stringify({ id: sidRef.current, paso: nodeIdRef.current, completa: doneRef.current, pagina: window.location.pathname });
+      const body = JSON.stringify({
+        id: sidRef.current,
+        paso: nodeIdRef.current,
+        completa: doneRef.current,
+        pagina: window.location.pathname,
+        texto: transcriptRef.current,
+        mensajes: countRef.current,
+      });
       navigator.sendBeacon?.("/api/manta/conversacion", new Blob([body], { type: "application/json" }));
     } catch {
       /* el registro es opcional: nunca debe afectar al chat */
@@ -92,12 +101,22 @@ export function MantaBubble() {
     };
   }, []);
 
-  // Conversación en texto plano, para adjuntarla al registro de la solicitud
+  // Conversación en texto plano, para adjuntarla al registro de la solicitud y verla en el portal
   useEffect(() => {
     transcriptRef.current = messages
       .map((m) => `${m.from === "manta" ? "Manta" : "Cliente"}: ${m.text}`)
       .join("\n");
+    countRef.current = messages.length;
+    if (!messages.length) return;
+    const t = window.setTimeout(sendConv, 700); // agrupa los mensajes que llegan seguidos
+    return () => window.clearTimeout(t);
   }, [messages]);
+
+  /** Cierra la conversación en curso (si la hay) para que la próxima empiece con otro id. */
+  function endConv() {
+    if (sidRef.current) sendConv();
+    sidRef.current = "";
+  }
 
   const ctx: Ctx = { answers, service: answers.service };
   const node: Node = nodes[nodeId] ?? nodes.start;
@@ -127,6 +146,7 @@ export function MantaBubble() {
       setOpen(true);
       setSeen(true);
       if (flow === "emergency") {
+        endConv();
         setMessages([]);
         setAnswers({});
         goTo("em1", {});
@@ -147,8 +167,7 @@ export function MantaBubble() {
   }
 
   function goTo(id: string, nextAnswers: Record<string, string>) {
-    if (id === "start") {
-      if (sidRef.current && !doneRef.current) sendConv(); // cierra la conversación anterior
+    if (!sidRef.current) {
       sidRef.current = typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : "";
       doneRef.current = false;
     }
@@ -180,6 +199,7 @@ export function MantaBubble() {
             answers: nextAnswers,
             transcript: transcriptRef.current,
             page: window.location.pathname,
+            conv: sidRef.current,
           }),
           keepalive: true,
         })
@@ -245,6 +265,7 @@ export function MantaBubble() {
   }
 
   function reset() {
+    endConv();
     setMessages([]);
     setAnswers({});
     setNodeId("start");

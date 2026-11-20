@@ -1,7 +1,8 @@
 "use client";
 
 import { useActionState } from "react";
-import { cambiarClaveAction, crearUsuarioAction, guardarAjusteAction, loginAction, probarConexionAction, reiniciarClaveAction, type FormState } from "@/lib/portal/actions";
+import Link from "next/link";
+import { cambiarClaveAction, crearUsuarioAction, guardarAjusteAction, loginAction, probarConexionAction, reiniciarClaveAction, restablecerClaveAction, solicitarRecuperacionAction, type FormState } from "@/lib/portal/actions";
 import { ROLES } from "@/lib/portal/model";
 import { boton, botonSuave, input } from "./ui";
 
@@ -34,6 +35,49 @@ export function LoginForm() {
       <Mensaje s={s} />
       <button className={`${boton} w-full`} disabled={pending}>
         {pending ? "Ingresando…" : "Ingresar"}
+      </button>
+      <p className="text-center text-sm">
+        <Link href="/portal/recuperar" className="font-semibold text-profundo underline-offset-2 hover:underline">
+          ¿Olvidó su contraseña?
+        </Link>
+      </p>
+    </form>
+  );
+}
+
+export function RecuperarForm() {
+  const [s, action, pending] = useActionState(solicitarRecuperacionAction, undefined);
+  if (s?.ok) return <Mensaje s={s} />;
+  return (
+    <form action={action} className="space-y-4">
+      <label className="block text-sm font-semibold">
+        Correo de su cuenta
+        <input name="correo" type="email" autoComplete="username" required className={`${input} mt-1`} />
+      </label>
+      <Mensaje s={s} />
+      <button className={`${boton} w-full`} disabled={pending}>
+        {pending ? "Enviando…" : "Enviarme el enlace"}
+      </button>
+    </form>
+  );
+}
+
+export function RestablecerClaveForm({ token }: { token: string }) {
+  const [s, action, pending] = useActionState(restablecerClaveAction, undefined);
+  return (
+    <form action={action} className="space-y-4">
+      <input type="hidden" name="token" value={token} />
+      <label className="block text-sm font-semibold">
+        Nueva contraseña (mínimo 10 caracteres)
+        <input name="nueva" type="password" autoComplete="new-password" minLength={10} required className={`${input} mt-1`} />
+      </label>
+      <label className="block text-sm font-semibold">
+        Repita la contraseña
+        <input name="repetir" type="password" autoComplete="new-password" minLength={10} required className={`${input} mt-1`} />
+      </label>
+      <Mensaje s={s} />
+      <button className={`${boton} w-full`} disabled={pending}>
+        {pending ? "Guardando…" : "Guardar contraseña"}
       </button>
     </form>
   );

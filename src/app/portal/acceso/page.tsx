@@ -7,8 +7,9 @@ import { dbConfigured } from "@/lib/portal/db";
 
 export const metadata = { title: "Ingresar" };
 
-export default async function Acceso() {
+export default async function Acceso({ searchParams }: { searchParams: Promise<{ clave?: string }> }) {
   if (dbConfigured() && (await currentUser())) redirect("/portal");
+  const claveNueva = (await searchParams).clave === "nueva";
   return (
     <main className="grid min-h-screen place-items-center px-5 py-10">
       <div className="w-full max-w-sm">
@@ -21,6 +22,9 @@ export default async function Acceso() {
           </div>
         </div>
         <div className={tarjeta}>
+          {claveNueva && (
+            <p role="status" className="mb-4 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-900">Listo, su contraseña nueva quedó guardada. Ingrese con ella.</p>
+          )}
           {dbConfigured() ? (
             <LoginForm />
           ) : (

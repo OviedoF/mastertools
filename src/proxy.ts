@@ -6,13 +6,15 @@ import { NextResponse, type NextRequest } from "next/server";
  */
 export function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
-  const publica = pathname === "/portal/acceso";
+  const recuperar = pathname === "/portal/recuperar" || pathname.startsWith("/portal/recuperar/");
+  const publica = pathname === "/portal/acceso" || recuperar;
   const res =
     !publica && !req.cookies.get("mt_portal")
       ? NextResponse.redirect(new URL("/portal/acceso", req.url))
       : NextResponse.next();
   res.headers.set("X-Robots-Tag", "noindex, nofollow");
   res.headers.set("Cache-Control", "private, no-store");
+  if (recuperar) res.headers.set("Referrer-Policy", "no-referrer"); // el enlace lleva el token
   return res;
 }
 

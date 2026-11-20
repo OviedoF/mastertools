@@ -38,7 +38,7 @@ export default async function CoveragePage() {
       <PageHero
         crumbs={crumbs}
         title="Cobertura"
-        text={`Nuestra base está en el Caribe colombiano y hemos trabajado en ${site.allDepartments.length} departamentos, en zonas urbanas y rurales. Nuestra meta es llegar a todo el país.`}
+        text={`Nuestra base está en el Caribe colombiano y hemos trabajado en ${site.allDepartments.length} departamentos, en zonas urbanas y rurales. Desde esa base atendemos proyectos a nivel nacional.`}
         photo={{ src: "/fotos/redes-rurales-aerea.jpg", alt: "Vista aérea de redes de media tensión en zona rural del Caribe" }}
       />
 

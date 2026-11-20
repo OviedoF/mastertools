@@ -102,3 +102,54 @@ export async function requireManager(tipo: Tipo): Promise<PortalUser> {
 export async function setPassword(userId: string, clave: string) {
   await query("update usuarios set clave_hash = $2, debe_cambiar = false where id = $1", [userId, await hashPassword(clave)]);
 }
+
+/* ----------------------- recuperar la contraseña ----------------------- */
+
+const RECUPERAR_MINUTOS = 60;
+const RECUPERAR_MAX_POR_HORA = 3;
+
+/**
+ * Crea un enlace de un solo uso para elegir una contraseña nueva y devuelve el token, o null si
+ * el correo no corresponde a un usuario activo o ya pidió demasiados enlaces en la última hora.
+ * Quien llama no debe revelar cuál de los dos casos ocurrió.
+ */
+export async function crearRecuperacion(correo: string): Promise<{ token: string; nombre: string; correo: string; minutos: number } | null> {
+  const u = await one<{ id: string; nombre: string; correo: string; recientes: string }>(
+    `select u.id, u.nombre, u.correo,
+            (select count(*) from recuperaciones r where r.usuario = u.id and r.creada_en > now() - interval '1 hour') as recientes
+       from usuarios u where lower(u.correo) = lower($1) and u.activo`,
+    [correo.trim()],
+  );
+  if (!u || Number(u.recientes) >= RECUPERAR_MAX_POR_HORA) return null;
+  const token = randomBytes(32).toString("base64url");
+  await query("delete from recuperaciones where expira_en < now() - interval '1 day'");
+  await query("insert into recuperaciones (token_hash, usuario, expira_en) values ($1, $2, now() + make_interval(mins => $3))", [
+    sha(token), u.id, RECUPERAR_MINUTOS,
+  ]);
+  return { token, nombre: u.nombre, correo: u.correo, minutos: RECUPERAR_MINUTOS };
+}
+
+/** Usuario dueño de un enlace de recuperación vigente y sin usar, o null. */
+export async function recuperacionVigente(token: string) {
+  if (!/^[A-Za-z0-9_-]{20,100}$/.test(token)) return null;
+  return one<{ usuario: string; nombre: string }>(
+    `select r.usuario, u.nombre from recuperaciones r join usuarios u on u.id = r.usuario
+      where r.token_hash = $1 and r.usado_en is null and r.expira_en > now() and u.activo`,
+    [sha(token)],
+  );
+}
+
+/** Usa el enlace: guarda la contraseña nueva, invalida los demás enlaces y cierra las sesiones abiertas. */
+export async function usarRecuperacion(token: string, clave: string): Promise<boolean> {
+  const r = await recuperacionVigente(token);
+  if (!r) return false;
+  const marcado = await query("update recuperaciones set usado_en = now() where token_hash = $1 and usado_en is null returning 1", [sha(token)]);
+  if (!marcado.length) return false; // otro envío lo usó primero
+  await query(
+    "update usuarios set clave_hash = $2, debe_cambiar = false, intentos = 0, bloqueado_hasta = null where id = $1",
+    [r.usuario, await hashPassword(clave)],
+  );
+  await query("update recuperaciones set usado_en = now() where usuario = $1 and usado_en is null", [r.usuario]);
+  await query("delete from sesiones where usuario = $1", [r.usuario]);
+  return true;
+}

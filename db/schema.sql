@@ -92,6 +92,11 @@ create table if not exists conversaciones (
   pagina    text,
   transcripcion text
 );
+-- Para verlas desde el portal (también en vivo) y enlazarlas con la solicitud que generaron.
+alter table conversaciones add column if not exists actualizada_en timestamptz not null default now();
+alter table conversaciones add column if not exists mensajes int not null default 0;
+alter table conversaciones add column if not exists solicitud uuid references solicitudes(id) on delete set null;
+create index if not exists conversaciones_actualizada on conversaciones (actualizada_en desc);
 
 -- Ajustes de conexión y credenciales editables por gerencia (valor secreto cifrado). Ver docs/AJUSTES.md.
 create table if not exists ajustes (
@@ -148,3 +153,13 @@ create table if not exists puesta_en_marcha (
   hecho_por uuid references usuarios(id) on delete set null,
   hecho_en  timestamptz not null default now()
 );
+
+-- Enlaces de un solo uso para recuperar la contraseña desde «¿Olvidó su contraseña?». Solo se guarda el hash del token.
+create table if not exists recuperaciones (
+  token_hash text primary key,
+  usuario    uuid not null references usuarios(id) on delete cascade,
+  expira_en  timestamptz not null,
+  usado_en   timestamptz,
+  creada_en  timestamptz not null default now()
+);
+create index if not exists recuperaciones_usuario on recuperaciones (usuario, creada_en desc);

@@ -79,20 +79,37 @@ export default async function Bandeja({ searchParams }: { searchParams: Promise<
         </div>
       </section>
 
-      {/* Contadores */}
-      <dl className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        {[
-          ["Nuevas", r.nuevas],
-          ["Abiertas", r.abiertas],
-          ["Sin responsable", r.sin_asignar],
-          ["Vencidas", r.vencidas],
-        ].map(([k, v]) => (
-          <div key={k} className="rounded-2xl bg-white p-4 shadow-card">
-            <dt className="text-xs font-semibold tracking-wide text-noche/60 uppercase">{k}</dt>
-            <dd className="mt-1 font-display text-3xl font-extrabold">{v}</dd>
-          </div>
-        ))}
-      </dl>
+      {/* Contadores: cada uno abre la lista con ese filtro */}
+      <ul className="grid grid-cols-2 gap-3 md:grid-cols-4" aria-label="Accesos rápidos">
+        {(
+          [
+            ["Nuevas", r.nuevas, "?estado=nueva"],
+            ["Abiertas", r.abiertas, "?estado=abiertas"],
+            ["Sin responsable", r.sin_asignar, "?estado=abiertas&responsable=sin"],
+            ["Vencidas", r.vencidas, "?vencidas=1"],
+          ] as const
+        ).map(([k, v, q]) => {
+          const activo = `?${filtrosActuales}` === q;
+          return (
+            <li key={k}>
+              <Link
+                href={activo ? "/portal" : `/portal${q}#lista`}
+                aria-current={activo ? "true" : undefined}
+                title={activo ? "Quitar este filtro" : `Ver ${k.toLowerCase()}`}
+                className={`group block rounded-2xl bg-white p-4 shadow-card transition hover:-translate-y-0.5 hover:shadow-card-hover focus-visible:outline-2 focus-visible:outline-profundo ${activo ? "ring-2 ring-profundo" : ""}`}
+              >
+                <span className="flex items-center justify-between text-xs font-semibold tracking-wide text-noche/60 uppercase">
+                  {k}
+                  <span className="text-profundo opacity-0 transition group-hover:opacity-100 group-focus-visible:opacity-100" aria-hidden="true">
+                    {activo ? "×" : "→"}
+                  </span>
+                </span>
+                <span className={`mt-1 block font-display text-3xl font-extrabold ${k === "Vencidas" && v > 0 ? "text-red-700" : ""}`}>{v}</span>
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
 
       {/* Vistas y filtros */}
       <section className={tarjeta} aria-label="Filtros">
@@ -180,7 +197,7 @@ export default async function Bandeja({ searchParams }: { searchParams: Promise<
       </section>
 
       {/* Lista */}
-      <section aria-label="Solicitudes" className="overflow-hidden rounded-2xl bg-white shadow-card">
+      <section id="lista" aria-label="Solicitudes" className="scroll-mt-4 overflow-hidden rounded-2xl bg-white shadow-card">
         {rows.length === 0 ? (
           <div className="flex flex-col items-center gap-3 px-6 py-14 text-center">
             <MantaAvatar mood="pensativo" size={64} />

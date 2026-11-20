@@ -31,7 +31,7 @@ export function Coverage({
             <span className="text-noche/70">departamentos con trabajos ejecutados</span>
           </div>
           <div className="mt-8">
-            <p className="eyebrow text-noche/60">Base y zona de emergencias</p>
+            <p className="eyebrow text-noche/60">Base operativa en el Caribe · emergencias con respuesta más rápida</p>
             <ul className="mt-3 flex flex-wrap gap-2">
               {caribe.map((d) => (
                 <li key={d} className="chip chip-noche gap-1.5 px-3.5 py-1.5 text-[0.8125rem]">

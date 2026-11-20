@@ -1,9 +1,10 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { layout, sendMail } from "@/lib/mail";
-import { currentUser, login, logout, requireAdmin, requireManager, setPassword } from "./auth";
+import { layout, mailConfigured, sendMail } from "@/lib/mail";
+import { crearRecuperacion, currentUser, login, logout, requireAdmin, requireManager, setPassword, usarRecuperacion } from "./auth";
 import { hashPassword, tempPassword } from "./password";
 import { one, query, tx } from "./db";
 import { AJUSTES, getSetting, guardarAjuste, quitarAjuste } from "@/lib/settings";
@@ -41,6 +42,57 @@ export async function cambiarClaveAction(_: FormState, f: FormData): Promise<For
   if (nueva !== String(f.get("repetir") ?? "")) return { error: "Las contraseñas no coinciden." };
   await setPassword(u.id, nueva);
   redirect("/portal");
+}
+
+const ESC: Record<string, string> = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" };
+const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ESC[c] ?? c);
+
+/** Dirección pública del portal para los enlaces de los correos. Primero la configurada, para no confiar en el encabezado Host. */
+async function origenPublico() {
+  const fijo = process.env.NEXT_PUBLIC_SITE_URL || process.env.URL;
+  if (fijo) return fijo.replace(/\/$/, "");
+  const h = await headers();
+  const host = h.get("x-forwarded-host") ?? h.get("host") ?? "localhost:3000";
+  return `${h.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https")}://${host}`;
+}
+
+export async function solicitarRecuperacionAction(_: FormState, f: FormData): Promise<FormState> {
+  const correo = str(f, "correo", 200);
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(correo)) return { error: "Escriba un correo válido." };
+  // Mismo mensaje exista o no el usuario, para no revelar qué correos tienen cuenta.
+  const listo = { ok: "Si ese correo tiene una cuenta activa, le llegará en unos minutos un enlace para crear una contraseña nueva. Revise también la carpeta de spam." };
+  try {
+    if (!(await mailConfigured())) return { error: "El portal todavía no tiene correo configurado para enviar el enlace. Pida a Gerencia que restablezca su contraseña desde Usuarios." };
+    const r = await crearRecuperacion(correo);
+    if (!r) return listo;
+    const enlace = `${await origenPublico()}/portal/recuperar/${r.token}`;
+    const nombre = r.nombre.split(" ")[0];
+    await sendMail({
+      to: r.correo,
+      subject: "Recuperar su contraseña del portal de Master Tools",
+      text: `Hola, ${nombre}:\n\nAlguien pidió recuperar la contraseña de su cuenta del portal. Para crear una nueva, abra este enlace (vale ${r.minutos} minutos y sirve una sola vez):\n\n${enlace}\n\nSi usted no lo pidió, ignore este correo: su contraseña actual sigue igual.`,
+      html: layout(
+        "Recuperar su contraseña",
+        `<p style="margin:0 0 12px">Hola, ${esc(nombre)}:</p>
+<p style="margin:0 0 16px">Alguien pidió recuperar la contraseña de su cuenta del portal de Master Tools. Para crear una nueva, use este botón. El enlace vale ${r.minutos} minutos y sirve una sola vez.</p>
+<p style="margin:0 0 20px"><a href="${esc(enlace)}" style="display:inline-block;background:#0066B2;color:#fff;text-decoration:none;font-weight:700;padding:12px 20px;border-radius:10px">Crear contraseña nueva</a></p>
+<p style="margin:0;color:#8A8F98;font-size:13px">Si usted no lo pidió, ignore este correo: su contraseña actual sigue igual.</p>`,
+      ),
+    });
+  } catch (e) {
+    console.error("[portal] recuperación de contraseña:", (e as Error).message);
+    return { error: "No pudimos enviar el correo en este momento. Intente de nuevo más tarde o pida a Gerencia que restablezca su contraseña." };
+  }
+  return listo;
+}
+
+export async function restablecerClaveAction(_: FormState, f: FormData): Promise<FormState> {
+  const token = str(f, "token", 200);
+  const nueva = String(f.get("nueva") ?? "");
+  if (nueva.length < 10) return { error: "Use al menos 10 caracteres." };
+  if (nueva !== String(f.get("repetir") ?? "")) return { error: "Las contraseñas no coinciden." };
+  if (!(await usarRecuperacion(token, nueva))) return { error: "Este enlace ya se usó o venció. Pida uno nuevo desde «¿Olvidó su contraseña?»." };
+  redirect("/portal/acceso?clave=nueva");
 }
 
 /* ----------------------------- casos ----------------------------- */

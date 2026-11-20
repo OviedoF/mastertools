@@ -26,6 +26,8 @@ export type Lead = {
   riesgo?: string;
   /** Conversación de Manta, para adjuntarla al registro */
   transcript?: string;
+  /** Id de la conversación de Manta, para enlazarla con el caso */
+  conversacionId?: string;
   page?: string;
   attachment?: Attachment;
 };
@@ -57,7 +59,7 @@ export async function handleLead(lead: Lead): Promise<LeadResult> {
     origen: lead.source,
     nombre: lead.nombre, empresa: lead.empresa, telefono: lead.telefono, correo: lead.correo,
     ciudad: lead.ciudad, direccion: lead.direccion, servicio: lead.servicio, plazo: lead.plazo,
-    mensaje: lead.mensaje, falla: lead.falla, riesgo: lead.riesgo, pagina: lead.page, conversacion: lead.transcript,
+    mensaje: lead.mensaje, falla: lead.falla, riesgo: lead.riesgo, pagina: lead.page, conversacion: lead.transcript, conversacionId: lead.conversacionId,
     adjunto: lead.attachment && Buffer.isBuffer(lead.attachment.content)
       ? { filename: lead.attachment.filename, content: lead.attachment.content, contentType: lead.attachment.contentType }
       : undefined,

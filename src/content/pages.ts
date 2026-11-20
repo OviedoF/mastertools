@@ -29,7 +29,7 @@ export const homeContent = {
     "Trabajos ejecutados por nuestro equipo, con fotos propias de cada intervención. La evidencia antes que los adjetivos.",
   coverageTitle: "Dónde trabajamos",
   coverageText:
-    "Con base en el Caribe, hemos trabajado en trece departamentos y atendemos en todo el país. Las emergencias tienen tiempos de respuesta más cortos en los departamentos de nuestra base.",
+    "Con base en el Caribe, hemos trabajado en catorce departamentos y atendemos proyectos en todo el país. Las emergencias tienen tiempos de respuesta más cortos en los departamentos de nuestra base.",
   emergencyTitle: "¿Tiene una falla eléctrica ahora?",
   emergencyText:
     "Llámenos o escríbanos. Si hay riesgo para personas, aléjese del área y llame al 123. Atendemos en baja y media tensión; la atención se confirma en cada caso.",
@@ -102,7 +102,7 @@ export const legalContent = {
     },
     {
       heading: "3. Datos que tratamos",
-      body: "Nombre, empresa, cargo, teléfono, correo electrónico, ciudad, dirección de la instalación y la información técnica que usted comparta, incluidos archivos adjuntos como fotos, planos o facturas de energía.",
+      body: "Nombre, empresa, cargo, teléfono, correo electrónico, ciudad, dirección de la instalación y la información técnica que usted comparta, incluidos archivos adjuntos como fotos, planos o facturas de energía. Si usa el chat del sitio (Manta), guardamos el texto de la conversación, aunque no termine en una solicitud, para atenderle y mejorar el servicio.",
     },
     {
       heading: "4. Derechos de los titulares",

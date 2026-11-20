@@ -7,7 +7,7 @@ import { SERVICES_LABELS } from "@/components/chat/flows";
  * igual que el formulario: aviso, confirmación y webhook.
  */
 export async function POST(req: NextRequest) {
-  let body: { kind?: string; answers?: Record<string, string>; transcript?: string; page?: string };
+  let body: { kind?: string; answers?: Record<string, string>; transcript?: string; page?: string; conv?: string };
   try {
     body = await req.json();
   } catch {
@@ -19,6 +19,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false, error: "Faltan datos" }, { status: 400 });
   }
   const clean = (v?: string) => (typeof v === "string" ? v.trim().slice(0, 500) : undefined);
+  const conversacionId = typeof body.conv === "string" && /^[0-9a-f-]{36}$/i.test(body.conv) ? body.conv : undefined;
 
   const lead: Lead =
     kind === "emergency"
@@ -32,6 +33,7 @@ export async function POST(req: NextRequest) {
           riesgo: clean(a.riesgo),
           transcript: clean(body.transcript)?.slice(0, 4000),
           page: clean(body.page),
+          conversacionId,
         }
       : {
           kind,
@@ -47,6 +49,7 @@ export async function POST(req: NextRequest) {
             .join(" · ") || undefined,
           transcript: clean(body.transcript)?.slice(0, 4000),
           page: clean(body.page),
+          conversacionId,
         };
 
   const result = await handleLead(lead);

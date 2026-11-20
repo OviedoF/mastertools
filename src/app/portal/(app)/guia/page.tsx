@@ -73,8 +73,9 @@ export default async function Guia() {
           Todo lo que piden los clientes llega aquí: las cotizaciones y las emergencias, sea que las envíen por el formulario del sitio o por el chat de Manta. Cada una es una <strong>solicitud</strong> (o «caso»).
         </p>
         <Pasos items={[
-          <>Abra <Link href="/portal" className="font-semibold text-profundo underline">Solicitudes</Link>: es la pantalla principal. Arriba, Manta le resume cómo va el día; abajo está la lista.</>,
+          <>Abra <Link href="/portal" className="font-semibold text-profundo underline">Solicitudes</Link>: es la pantalla principal. Arriba, Manta le resume cómo va el día; debajo, los contadores (Nuevas, Abiertas, Sin responsable, Vencidas): toque uno y la lista se filtra con esos casos. Tóquelo otra vez para quitar el filtro.</>,
           <>Toque una solicitud para abrirla. Verá los datos del cliente, el historial y lo que puede hacer con ella.</>,
+          <>En <Link href="/portal/conversaciones" className="font-semibold text-profundo underline">Conversaciones</Link> puede leer lo que los visitantes hablan con Manta en el sitio, también las que no terminaron en solicitud. Con «En vivo» activado, la pantalla se actualiza sola y ve las conversaciones mientras ocurren.</>,
           <>La campana de arriba a la derecha le avisa cuando llega algo nuevo o le asignan un caso.</>,
           <>Para salir, use el botón de la esquina superior derecha. La sesión se cierra sola a las 12 horas.</>,
         ]} />
@@ -157,7 +158,7 @@ export default async function Guia() {
       <Seccion id="dudas" titulo="Preguntas frecuentes">
         <dl className="space-y-3 text-sm">
           {[
-            ["Olvidé mi contraseña.", "Pídale a alguien de Gerencia que la reinicie en Usuarios. Recibirá una temporal y deberá cambiarla."],
+            ["Olvidé mi contraseña.", "En la pantalla de ingreso toque «¿Olvidó su contraseña?», escriba su correo y le llegará un enlace (vale una hora) para crear una nueva. Si no le llega, pídale a alguien de Gerencia que la reinicie en Usuarios."],
             ["Escribí mal la contraseña varias veces y no me deja entrar.", "Tras 5 intentos fallidos, la cuenta se bloquea 15 minutos. Espere y vuelva a intentar."],
             ["No puedo cambiar el estado de una solicitud.", "Su rol solo permite consultar ese tipo de solicitud. Pídaselo a quien la gestiona o a Gerencia."],
             ["Un cliente me dice que envió una solicitud y no la veo.", "Revise que los filtros no estén ocultándola (botón para limpiarlos) y busque por su nombre o teléfono. Si no aparece, avise a Gerencia."],

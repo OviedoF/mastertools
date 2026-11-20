@@ -36,6 +36,9 @@ export default async function PortalLayout({ children }: { children: ReactNode }
             <Link href="/portal" className="shrink-0 rounded-lg px-3 py-2 hover:bg-white/10">
               Solicitudes
             </Link>
+            <Link href="/portal/conversaciones" className="shrink-0 rounded-lg px-3 py-2 hover:bg-white/10">
+              Conversaciones
+            </Link>
             {puedeAdministrar(u.rol) && (
               <>
                 <Link href="/portal/dashboard" className="shrink-0 rounded-lg px-3 py-2 hover:bg-white/10">
