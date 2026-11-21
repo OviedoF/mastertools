@@ -34,7 +34,7 @@ Solo Gerencia ve y modifica Ajustes.
 | Destinatarios | `MAIL_TO` | Quién recibe las cotizaciones (varios, separados por coma) |
 | | `EMERGENCY_TO` | Quién recibe las emergencias |
 | | `LEAD_WEBHOOK_URL` | Dirección externa que recibe cada solicitud como JSON (opcional, secreta) |
-| WhatsApp | `WHATSAPP_PHONE_ID`, `WHATSAPP_TOKEN` (secreto), `WHATSAPP_TEMPLATE`, `WHATSAPP_LANG`, `WHATSAPP_TO` | Aviso de cada emergencia nueva al equipo de turno. Ver `docs/WHATSAPP.md` |
+| WhatsApp | `WHATSAPP_PHONE_ID`, `WHATSAPP_TOKEN` (secreto), `WHATSAPP_TEMPLATE`, `WHATSAPP_LANG` y la lista de números que reciben el aviso (tabla `whatsapp_destinos`) | Aviso de cada emergencia nueva al equipo de turno. Ver `docs/WHATSAPP.md` |
 | Acceso | `PORTAL_ALLOWED_DOMAINS` | Dominios de correo que pueden tener usuario, por ejemplo `mastertools.tech` |
 
 Lo que **no** se maneja aquí, porque hace falta antes de poder leer la base de datos o porque es de otro sistema:

@@ -122,7 +122,7 @@ export function layout(title: string, bodyHtml: string, accent: "profundo" | "al
 <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#fff;border-radius:16px;overflow:hidden">
 <tr><td style="background:${bar};color:${barText};padding:16px 24px;font-family:Montserrat,Arial,sans-serif;font-weight:700;font-size:18px">${esc(title)}</td></tr>
 <tr><td style="padding:24px;font-size:15px;line-height:1.6">${bodyHtml}</td></tr>
-<tr><td style="padding:16px 24px;background:#0B1F4D;color:#CFEFFF;font-size:12px">Master Tools &amp; Services S.A.S. · mastertools.tech · +57 300 687 3112<br>Ingeniería que conecta, soluciones que transforman.</td></tr>
+<tr><td style="padding:16px 24px;background:#0B1F4D;color:#CFEFFF;font-size:12px">Master Tools &amp; Services S.A.S. · mastertools.tech · +57 321 473 0384<br>Ingeniería que conecta, soluciones que transforman.</td></tr>
 </table></td></tr></table></body></html>`;
 }
 

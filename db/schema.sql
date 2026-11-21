@@ -163,3 +163,14 @@ create table if not exists recuperaciones (
   creada_en  timestamptz not null default now()
 );
 create index if not exists recuperaciones_usuario on recuperaciones (usuario, creada_en desc);
+
+-- Números del equipo que reciben el aviso de emergencias por WhatsApp (lista editable en Ajustes).
+create table if not exists whatsapp_destinos (
+  id          bigserial primary key,
+  nombre      text not null,
+  numero      text not null unique,            -- solo dígitos, con indicativo: 573001234567
+  cuando      text not null default 'siempre' check (cuando in ('siempre','fuera_horario')),
+  activo      boolean not null default true,
+  creado_en   timestamptz not null default now(),
+  creado_por  uuid references usuarios(id) on delete set null
+);

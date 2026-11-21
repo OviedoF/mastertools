@@ -276,6 +276,60 @@ export async function reiniciarClaveAction(_: FormState, f: FormData): Promise<F
   return { ok: "Contraseña temporal generada. Entréguela por un canal privado.", clave };
 }
 
+/* ----------------------- WhatsApp: números que reciben el aviso ----------------------- */
+
+/** Deja solo dígitos con indicativo. Un celular colombiano de 10 dígitos (3xx…) recibe el 57 delante. */
+function normalizarNumero(v: string): string | null {
+  let n = v.replace(/\D/g, "");
+  if (n.length === 10 && n.startsWith("3")) n = `57${n}`;
+  return /^\d{11,15}$/.test(n) ? n : null;
+}
+
+async function registrarCambioDestinos(usuario: string, accion: "guardado" | "quitado") {
+  await query("insert into ajustes_historial (clave, usuario, accion) values ('WHATSAPP_DESTINOS', $1, $2)", [usuario, accion]);
+  revalidatePath("/portal/ajustes");
+  revalidatePath("/portal/dashboard");
+}
+
+export async function crearDestinoAction(_: FormState, f: FormData): Promise<FormState> {
+  const admin = await requireAdmin();
+  const nombre = str(f, "nombre", 80);
+  const numero = normalizarNumero(str(f, "numero", 40));
+  const cuando = str(f, "cuando") === "fuera_horario" ? "fuera_horario" : "siempre";
+  if (!nombre) return { error: "Escriba el nombre de la persona o del turno." };
+  if (!numero) return { error: "Revise el número: con indicativo de país, por ejemplo +57 300 123 4567." };
+  const r = await query("insert into whatsapp_destinos (nombre, numero, cuando, creado_por) values ($1,$2,$3,$4) on conflict (numero) do nothing returning id", [nombre, numero, cuando, admin.id]);
+  if (!r.length) return { error: "Ese número ya está en la lista." };
+  await registrarCambioDestinos(admin.id, "guardado");
+  return { ok: `Agregado: ${nombre}.` };
+}
+
+export async function actualizarDestinoAction(_: FormState, f: FormData): Promise<FormState> {
+  const admin = await requireAdmin();
+  const id = str(f, "id", 20);
+  const nombre = str(f, "nombre", 80);
+  const numero = normalizarNumero(str(f, "numero", 40));
+  const cuando = str(f, "cuando") === "fuera_horario" ? "fuera_horario" : "siempre";
+  const activo = f.get("activo") === "on";
+  if (!/^\d+$/.test(id)) return { error: "No se encontró ese número." };
+  if (!nombre || !numero) return { error: "Revise el nombre y el número." };
+  try {
+    await query("update whatsapp_destinos set nombre = $2, numero = $3, cuando = $4, activo = $5 where id = $1", [id, nombre, numero, cuando, activo]);
+  } catch {
+    return { error: "Ese número ya está en la lista." };
+  }
+  await registrarCambioDestinos(admin.id, "guardado");
+  return { ok: "Guardado." };
+}
+
+export async function borrarDestinoAction(f: FormData) {
+  const admin = await requireAdmin();
+  const id = str(f, "id", 20);
+  if (!/^\d+$/.test(id)) return;
+  await query("delete from whatsapp_destinos where id = $1", [id]);
+  await registrarCambioDestinos(admin.id, "quitado");
+}
+
 /* ----------------------------- ajustes ----------------------------- */
 
 export async function guardarAjusteAction(_: FormState, f: FormData): Promise<FormState> {
@@ -315,8 +369,8 @@ export async function probarConexionAction(_: FormState, f: FormData): Promise<F
       return r.ok ? { ok: r.detalle } : { error: r.detalle };
     }
     if (que === "whatsapp") {
-      if (!(await whatsappConfigurado())) return { error: "Faltan datos de WhatsApp (número, token, plantilla o destinatarios)." };
-      const r = await avisarWhatsApp("Mensaje de prueba desde el portal de Master Tools. No requiere ninguna acción.");
+      if (!(await whatsappConfigurado())) return { error: "Faltan datos de WhatsApp (ID del número, token o plantilla) o no hay ningún número activo en la lista." };
+      const r = await avisarWhatsApp("Mensaje de prueba desde el portal de Master Tools. No requiere ninguna acción.", { todos: true });
       if (r.errores.length) return { error: `Se enviaron ${r.enviados}; fallaron: ${r.errores.join(" | ")}` };
       return { ok: `Mensaje de prueba enviado a ${r.enviados} ${r.enviados === 1 ? "número" : "números"}.` };
     }

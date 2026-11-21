@@ -91,15 +91,14 @@ async function revisar() {
       id: "whatsapp", titulo: "Aviso de emergencias por WhatsApp", auto: wa,
       paraQue: "Cada emergencia nueva le llega por WhatsApp al equipo de turno, además del correo y el portal. Es opcional.",
       como: [
-        "Consiga un número de teléfono exclusivo para los avisos. No puede estar en uso en la aplicación de WhatsApp o WhatsApp Business: si ya la tiene instalada con ese número, hay que eliminar esa cuenta antes. Lo más sencillo es una línea nueva.",
+        "El número de los avisos es el +57 312 425 9438. No puede estar en uso en la aplicación de WhatsApp o WhatsApp Business: si ya la tiene instalada con ese número, hay que eliminar esa cuenta antes.",
         "Entre a business.facebook.com con una cuenta de Facebook de la persona responsable y cree el «Portafolio comercial» (Business Manager) de Master Tools, si todavía no existe.",
         "En Configuración del negocio > Usuarios > Personas, pulse «Agregar» y escriba el correo que le indiquemos. Déle acceso total. Así nosotros hacemos la configuración técnica sin que usted tenga que hacerla.",
         "Para que Meta deje enviar mensajes a mayor escala, puede pedir la verificación de la empresa en Configuración del negocio > Centro de seguridad. Tiene que subir documentos de la empresa; Meta tarda unos días en responder.",
-        "Haga una lista con los números de WhatsApp del equipo de turno que recibirán el aviso.",
+        "Cargue los números del equipo de turno en Ajustes > WhatsApp > «Números que reciben el aviso». Puede elegir si cada uno recibe siempre o solo fuera de horario.",
       ],
       enviar: [
-        "El número dedicado para los avisos, con indicativo del país (+57…), confirmando que no está en uso en WhatsApp.",
-        "Los números del equipo de turno que reciben el aviso.",
+        "Confirmación de que el número de los avisos (+57 312 425 9438) no está en uso en la app de WhatsApp.",
         "Confirmación de que ya nos agregó como administradores en su cuenta de Meta Business.",
       ],
       nota: "Meta tiene que aprobar el texto del mensaje, y eso puede tardar de unas horas a un par de días. Sin esto, los avisos siguen llegando por correo y por el portal.",

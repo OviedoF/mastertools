@@ -78,7 +78,7 @@ export async function submitQuote(_prev: QuoteState, formData: FormData): Promis
     console.error("[lead] fallo de envío", result.errors);
     return {
       message:
-        "No pudimos enviar su solicitud. Revise su conexión e intente de nuevo, o escríbanos por WhatsApp al +57 300 687 3112.",
+        "No pudimos enviar su solicitud. Revise su conexión e intente de nuevo, o escríbanos por WhatsApp al +57 321 473 0384.",
     };
   }
 

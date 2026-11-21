@@ -63,9 +63,9 @@ export const site: SiteSettings = {
   founded: 2024,
 
   phone: {
-    display: "+57 300 687 3112",
-    tel: "+573006873112",
-    wa: "573006873112",
+    display: "+57 321 473 0384",
+    tel: "+573214730384",
+    wa: "573214730384",
   },
   /** Propuesta: el cliente debe confirmar el correo comercial único. */
   email: "comercial@mastertools.tech",

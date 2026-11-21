@@ -13,6 +13,7 @@ si falla, la emergencia igual queda registrada, avisada por correo y en la campa
 1. Una cuenta de **Meta Business** a nombre de Master Tools (business.facebook.com) verificada.
 2. Un **número de teléfono dedicado** para el aviso (no puede estar activo en la app de WhatsApp normal).
    Puede ser un número nuevo; los destinatarios son los números del equipo.
+   **Número definido por Master Tools (21 de noviembre de 2026): +57 312 425 9438.** No debe estar en uso en la app de WhatsApp.
 3. Una **plantilla de mensaje aprobada**. Los mensajes que inicia la empresa, fuera de una conversación abierta
    por el cliente, solo pueden ser plantillas.
 
@@ -36,7 +37,7 @@ si falla, la emergencia igual queda registrada, avisada por correo y en la campa
 | Token de acceso permanente | el token del paso 3 (se guarda cifrado) |
 | Nombre de la plantilla aprobada | `aviso_emergencia` |
 | Idioma de la plantilla | `es` |
-| Números que reciben el aviso | con indicativo y sin signos, separados por coma: `573001234567, 573009876543` |
+| Números que reciben el aviso | ya no es un ajuste de texto: es una lista en Ajustes > WhatsApp (agregar, editar, desactivar, quitar). Cada número puede recibir siempre o solo fuera de horario (lunes a viernes 8:00 a 16:00) |
 
 6. Pulsar **Enviar mensaje de prueba por WhatsApp**. Debe llegar a cada número un mensaje de la plantilla con un texto de prueba.
 
@@ -61,4 +62,4 @@ Consultar la tarifa vigente para Colombia en la documentación de Meta antes de 
 
 - El token se guarda cifrado en la base (ver `docs/AJUSTES.md`) y nunca se muestra en pantalla.
 - El mensaje incluye el nombre y el teléfono de quien reporta la emergencia: enviarlo solo a personas del equipo.
-- Para desactivarlo: en Ajustes, «Quitar» en cualquiera de los datos de WhatsApp (por ejemplo, los destinatarios).
+- Para desactivarlo: en Ajustes, «Quitar» en cualquiera de los datos de WhatsApp (por ejemplo, el token), o desactive los números de la lista.

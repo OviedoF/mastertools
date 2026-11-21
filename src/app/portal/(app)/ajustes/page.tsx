@@ -1,9 +1,10 @@
 import clsx from "clsx";
-import { AjusteForm, ProbarForm } from "@/components/portal/Forms";
+import { AgregarDestinoForm, AjusteForm, DestinoFila, ProbarForm } from "@/components/portal/Forms";
 import { botonSuave, fechaHora, tarjeta } from "@/components/portal/ui";
 import { quitarAjusteAction } from "@/lib/portal/actions";
 import { requireAdmin } from "@/lib/portal/auth";
 import { GRUPOS, ajusteDef, estadoAjustes, historialAjustes, type GrupoId } from "@/lib/settings";
+import { NUMERO_BOT, listarDestinos } from "@/lib/whatsapp";
 
 export const metadata = { title: "Ajustes" };
 
@@ -15,7 +16,7 @@ const ORIGEN = {
 
 export default async function Ajustes() {
   await requireAdmin();
-  const [estados, historial] = await Promise.all([estadoAjustes(), historialAjustes()]);
+  const [estados, historial, destinos] = await Promise.all([estadoAjustes(), historialAjustes(), listarDestinos()]);
   const grupos = Object.keys(GRUPOS) as GrupoId[];
 
   return (
@@ -78,9 +79,31 @@ export default async function Ajustes() {
                 <div className="p-5"><ProbarForm que="correo" etiqueta="Probar conexión con el correo" /></div>
               )}
               {g === "whatsapp" && (
+                <div id="destinos" className="scroll-mt-4 space-y-3 p-5">
+                  <div>
+                    <p className="font-semibold text-noche">Números que reciben el aviso</p>
+                    <p className="mt-0.5 text-sm text-noche/75">
+                      Los avisos salen desde el número {NUMERO_BOT}. Cada persona de esta lista tiene que haberle escrito antes a ese número por WhatsApp
+                      (aunque sea un «hola») o haber aceptado recibir mensajes. «Solo fuera de horario» avisa fuera de lunes a viernes de 8:00 a 16:00.
+                    </p>
+                  </div>
+                  {destinos.length > 0 ? (
+                    <ul className="divide-y divide-noche/10">
+                      {destinos.map((d) => <DestinoFila key={`${d.id}-${d.numero}-${d.nombre}-${d.cuando}-${d.activo}`} d={d} />)}
+                    </ul>
+                  ) : (
+                    <p className="rounded-lg bg-niebla px-3 py-2 text-sm text-noche/80">Todavía no hay números. Agregue el primero abajo.</p>
+                  )}
+                  <div className="border-t border-noche/10 pt-3">
+                    <p className="mb-2 text-sm font-semibold text-noche">Agregar un número</p>
+                    <AgregarDestinoForm />
+                  </div>
+                </div>
+              )}
+              {g === "whatsapp" && (
                 <div className="p-5">
                   <ProbarForm que="whatsapp" etiqueta="Enviar mensaje de prueba por WhatsApp" />
-                  <p className="mt-2 text-xs text-gris">Envía un mensaje real de prueba a los números configurados.</p>
+                  <p className="mt-2 text-xs text-gris">Envía un mensaje real de prueba a todos los números activos de la lista, sin importar el horario.</p>
                 </div>
               )}
               {g === "avisos" && (
@@ -102,7 +125,7 @@ export default async function Ajustes() {
               {historial.map((h, i) => (
                 <li key={i}>
                   <span className="font-semibold">{h.nombre ?? "Alguien"}</span> {h.accion === "guardado" ? "guardó" : "quitó"}{" "}
-                  <span>{ajusteDef(h.clave)?.etiqueta ?? h.clave}</span>
+                  <span>{h.clave === "WHATSAPP_DESTINOS" ? "la lista de números de WhatsApp" : ajusteDef(h.clave)?.etiqueta ?? h.clave}</span>
                   <span className="text-gris"> · {fechaHora(h.creado_en)}</span>
                 </li>
               ))}

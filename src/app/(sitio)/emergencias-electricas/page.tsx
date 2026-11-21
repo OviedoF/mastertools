@@ -17,7 +17,7 @@ import { OpenMantaButton } from "@/components/chat/OpenMantaButton";
 export const metadata: Metadata = {
   title: "Emergencias eléctricas en el Caribe",
   description:
-    "Atención de fallas eléctricas en baja y media tensión, transformadores y sistemas de medida en todo el país, con respuesta más rápida en Barranquilla, Cartagena, Santa Marta, Montería, Valledupar y Sincelejo. Llame al +57 300 687 3112.",
+    "Atención de fallas eléctricas en baja y media tensión, transformadores y sistemas de medida en todo el país, con respuesta más rápida en Barranquilla, Cartagena, Santa Marta, Montería, Valledupar y Sincelejo. Llame al +57 321 473 0384.",
   alternates: { canonical: "/emergencias-electricas" },
   keywords: ["emergencia eléctrica Barranquilla", "falla eléctrica media tensión", "electricista industrial urgente"],
 };

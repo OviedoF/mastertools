@@ -15,7 +15,7 @@ import { OpenMantaButton } from "@/components/chat/OpenMantaButton";
 export const metadata: Metadata = {
   title: "Contacto y cotizaciones",
   description:
-    "Solicite una cotización de servicios de ingeniería eléctrica o reporte una emergencia. WhatsApp +57 300 687 3112.",
+    "Solicite una cotización de servicios de ingeniería eléctrica o reporte una emergencia. WhatsApp +57 321 473 0384.",
   alternates: { canonical: "/contacto" },
   keywords: ["cotización servicios eléctricos"],
 };

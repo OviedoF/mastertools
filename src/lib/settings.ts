@@ -42,7 +42,7 @@ export const GRUPOS: Record<GrupoId, { titulo: string; descripcion: string }> = 
   },
   whatsapp: {
     titulo: "Aviso de emergencias por WhatsApp",
-    descripcion: "Cada emergencia nueva se avisa por WhatsApp al equipo de turno, con la API oficial de Meta. Guía en docs/WHATSAPP.md.",
+    descripcion: "Cada emergencia nueva se avisa por WhatsApp al equipo de turno, con la API oficial de Meta, desde el número +57 312 425 9438. Guía en docs/WHATSAPP.md.",
   },
   acceso: {
     titulo: "Acceso al portal",
@@ -105,11 +105,6 @@ export const AJUSTES: AjusteDef[] = [
     placeholder: "aviso_emergencia", validar: (v) => (/^[a-z0-9_]{1,512}$/.test(v) ? null : "Solo minúsculas, números y guion bajo."),
   },
   { clave: "WHATSAPP_LANG", grupo: "whatsapp", etiqueta: "Idioma de la plantilla", ayuda: "Código del idioma con el que se aprobó. Por defecto: es.", placeholder: "es", validar: (v) => (/^[a-z]{2}(_[A-Z]{2})?$/.test(v) ? null : "Por ejemplo: es o es_CO.") },
-  {
-    clave: "WHATSAPP_TO", grupo: "whatsapp", etiqueta: "Números que reciben el aviso",
-    ayuda: "Con indicativo de país y sin signos, separados por coma. Cada número debe haber aceptado recibir mensajes.", placeholder: "573001234567, 573009876543",
-    validar: (v) => (v.split(",").every((n) => /^\d{10,15}$/.test(n.trim())) ? null : "Solo números con indicativo, por ejemplo 573001234567."),
-  },
   { clave: "PORTAL_ALLOWED_DOMAINS", grupo: "acceso", etiqueta: "Dominios permitidos para usuarios", ayuda: "Separados por coma. Solo correos de esos dominios pueden tener usuario.", placeholder: "mastertools.tech", validar: noVacio },
 ];
 
