@@ -1,10 +1,10 @@
 import clsx from "clsx";
-import { AgregarDestinoForm, AjusteForm, DestinoFila, ProbarForm } from "@/components/portal/Forms";
+import { AgregarDestinoForm, AjusteForm, DestinoFila, ProbarForm, type EstadoDestino } from "@/components/portal/Forms";
 import { botonSuave, fechaHora, tarjeta } from "@/components/portal/ui";
 import { quitarAjusteAction } from "@/lib/portal/actions";
 import { requireAdmin } from "@/lib/portal/auth";
 import { GRUPOS, ajusteDef, estadoAjustes, historialAjustes, type GrupoId } from "@/lib/settings";
-import { NUMERO_BOT, listarDestinos } from "@/lib/whatsapp";
+import { NUMERO_BOT, faltantesWhatsApp, listarDestinos, type Destino } from "@/lib/whatsapp";
 
 export const metadata = { title: "Ajustes" };
 
@@ -14,9 +14,43 @@ const ORIGEN = {
   vacio: { texto: "Sin definir", clase: "bg-slate-200 text-slate-700" },
 } as const;
 
+/** Errores frecuentes de Meta, en palabras del cliente. */
+function explicarErrorMeta(detalle: string | null): string {
+  const d = detalle ?? "";
+  if (/131026|undeliverable/i.test(d)) return "WhatsApp no pudo entregarlo: el número no tiene WhatsApp, o la persona no le ha escrito al número de avisos.";
+  if (/131030|not in allowed list/i.test(d)) return "La cuenta de Meta está en modo de prueba y este número no está autorizado en ella.";
+  if (/132001|template name does not exist/i.test(d)) return "La plantilla no existe o aún no está aprobada (revise el nombre y el idioma).";
+  if (/HTTP 401|190|OAuth/i.test(d)) return "El token de WhatsApp venció o no tiene permiso. Hay que generar uno permanente.";
+  if (/131056|pair rate/i.test(d)) return "Se enviaron demasiados mensajes seguidos a este número. Espere unos minutos.";
+  return d || "sin detalle";
+}
+
+/** «2:09 a. m.» + «.» sin duplicar el punto. */
+const conPunto = (t: string) => (t.endsWith(".") ? t : `${t}.`);
+
+/**
+ * Estado de un número de la lista, en palabras del cliente. «Listo para usar» exige que Meta haya aceptado
+ * el último mensaje (prueba o aviso real); Meta no confirma aquí la lectura en el teléfono.
+ */
+function estadoDestino(d: Destino, conectado: boolean): EstadoDestino {
+  if (!d.activo) return { etiqueta: "Desactivado", tono: "gris", detalle: "No recibe avisos." };
+  if (d.ultimo_envio_ok && d.ultimo_envio_en) {
+    return { etiqueta: "Listo para usar", tono: "verde", detalle: conPunto(`Meta aceptó el último mensaje el ${fechaHora(d.ultimo_envio_en)}`) };
+  }
+  if (d.ultimo_envio_ok === false && d.ultimo_envio_en) {
+    return { etiqueta: "Revisar", tono: "rojo", detalle: `Falló el envío del ${fechaHora(d.ultimo_envio_en)}: ${explicarErrorMeta(d.ultimo_envio_detalle)}` };
+  }
+  if (!d.hola) {
+    return { etiqueta: "Falta el «hola»", tono: "alerta", detalle: `Esta persona tiene que escribirle «hola» por WhatsApp al ${NUMERO_BOT}. Después marque la casilla.` };
+  }
+  if (!conectado) return { etiqueta: "Esperando la conexión", tono: "azul", detalle: "Listo de su lado. Falta conectar WhatsApp (datos de arriba)." };
+  return { etiqueta: "Listo para probar", tono: "azul", detalle: "Pulse «Enviar mensaje de prueba por WhatsApp» para confirmarlo." };
+}
+
 export default async function Ajustes() {
   await requireAdmin();
-  const [estados, historial, destinos] = await Promise.all([estadoAjustes(), historialAjustes(), listarDestinos()]);
+  const [estados, historial, destinos, faltanWa] = await Promise.all([estadoAjustes(), historialAjustes(), listarDestinos(), faltantesWhatsApp()]);
+  const waConectado = !faltanWa.some((f) => /ID del número|Token|plantilla/.test(f));
   const grupos = Object.keys(GRUPOS) as GrupoId[];
 
   return (
@@ -80,6 +114,17 @@ export default async function Ajustes() {
               )}
               {g === "whatsapp" && (
                 <div id="destinos" className="scroll-mt-4 space-y-3 p-5">
+                  {faltanWa.length === 0 ? (
+                    <p className="rounded-lg bg-emerald-100 px-3 py-2 text-sm text-emerald-900">
+                      <span className="font-semibold">Listo para usar.</span> Las emergencias nuevas se avisan por WhatsApp a los números marcados como «Listo para usar».
+                    </p>
+                  ) : (
+                    <div className="rounded-lg bg-niebla px-3 py-2 text-sm text-noche">
+                      <p className="font-semibold">Todavía no está listo. Falta:</p>
+                      <ul className="mt-1 list-disc pl-5">{faltanWa.map((f) => <li key={f}>{f}</li>)}</ul>
+                      <p className="mt-1 text-noche/70">Mientras tanto, las emergencias siguen llegando por correo y a la campana del portal.</p>
+                    </div>
+                  )}
                   <div>
                     <p className="font-semibold text-noche">Números que reciben el aviso</p>
                     <p className="mt-0.5 text-sm text-noche/75">
@@ -89,7 +134,12 @@ export default async function Ajustes() {
                   </div>
                   {destinos.length > 0 ? (
                     <ul className="divide-y divide-noche/10">
-                      {destinos.map((d) => <DestinoFila key={`${d.id}-${d.numero}-${d.nombre}-${d.cuando}-${d.activo}`} d={d} />)}
+                      {destinos.map((d) => (
+                        <DestinoFila
+                          key={`${d.id}-${d.numero}-${d.nombre}-${d.cuando}-${d.activo}-${d.hola}`}
+                          d={{ id: d.id, nombre: d.nombre, numero: d.numero, cuando: d.cuando, activo: d.activo, hola: d.hola, estado: estadoDestino(d, waConectado) }}
+                        />
+                      ))}
                     </ul>
                   ) : (
                     <p className="rounded-lg bg-niebla px-3 py-2 text-sm text-noche/80">Todavía no hay números. Agregue el primero abajo.</p>
@@ -104,6 +154,12 @@ export default async function Ajustes() {
                 <div className="p-5">
                   <ProbarForm que="whatsapp" etiqueta="Enviar mensaje de prueba por WhatsApp" />
                   <p className="mt-2 text-xs text-gris">Envía un mensaje real de prueba a todos los números activos de la lista, sin importar el horario.</p>
+                </div>
+              )}
+              {g === "campo" && (
+                <div className="p-5">
+                  <ProbarForm que="whatsapp_campo" etiqueta="Enviar mensaje de prueba a los técnicos" />
+                  <p className="mt-2 text-xs text-gris">Envía un mensaje real a cada técnico activo con teléfono cargado en Usuarios. El botón del mensaje abre la app (en la prueba no lleva a ningún servicio).</p>
                 </div>
               )}
               {g === "avisos" && (

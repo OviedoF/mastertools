@@ -106,9 +106,10 @@ export function CambiarClaveForm() {
 export function CrearUsuarioForm() {
   const [s, action, pending] = useActionState(crearUsuarioAction, undefined);
   return (
-    <form action={action} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_12rem_auto]">
+    <form action={action} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_11rem_12rem_auto]">
       <input name="nombre" placeholder="Nombre completo" aria-label="Nombre completo" required className={input} />
       <input name="correo" type="email" placeholder="correo@mastertools.tech" aria-label="Correo" required className={input} />
+      <input name="telefono" inputMode="tel" placeholder="WhatsApp: +57 300…" aria-label="Teléfono de WhatsApp (obligatorio para técnicos)" className={input} />
       <select name="rol" aria-label="Rol" defaultValue="comercial" className={input}>
         {Object.entries(ROLES).map(([k, r]) => (
           <option key={k} value={k}>
@@ -119,7 +120,7 @@ export function CrearUsuarioForm() {
       <button className={boton} disabled={pending}>
         Crear usuario
       </button>
-      <div className="sm:col-span-2 lg:col-span-4">
+      <div className="sm:col-span-2 lg:col-span-5">
         <Mensaje s={s} />
       </div>
     </form>
@@ -160,7 +161,7 @@ export function AjusteForm({ clave, secreto, multilinea, valor, placeholder, def
   );
 }
 
-export function ProbarForm({ que, etiqueta }: { que: "analytics" | "correo" | "whatsapp" | "recordatorio"; etiqueta: string }) {
+export function ProbarForm({ que, etiqueta }: { que: "analytics" | "correo" | "whatsapp" | "whatsapp_campo" | "recordatorio"; etiqueta: string }) {
   const [s, action, pending] = useActionState(probarConexionAction, undefined);
   return (
     <form action={action} className="space-y-2">
@@ -173,7 +174,34 @@ export function ProbarForm({ que, etiqueta }: { que: "analytics" | "correo" | "w
 
 /* ----------------------- WhatsApp: números que reciben el aviso ----------------------- */
 
-type DestinoUI = { id: string; nombre: string; numero: string; cuando: "siempre" | "fuera_horario"; activo: boolean };
+export type EstadoDestino = { etiqueta: string; tono: "verde" | "rojo" | "alerta" | "azul" | "gris"; detalle: string };
+type DestinoUI = { id: string; nombre: string; numero: string; cuando: "siempre" | "fuera_horario"; activo: boolean; hola: boolean; estado?: EstadoDestino };
+
+const TONO_ESTADO: Record<EstadoDestino["tono"], string> = {
+  verde: "bg-emerald-100 text-emerald-900",
+  rojo: "bg-red-100 text-red-800",
+  alerta: "bg-alerta/90 text-noche",
+  azul: "bg-claro text-noche",
+  gris: "bg-slate-200 text-slate-700",
+};
+
+function EstadoChip({ e }: { e: EstadoDestino }) {
+  return (
+    <p className="flex flex-wrap items-center gap-2 text-xs">
+      <span className={`rounded-full px-2.5 py-0.5 font-semibold ${TONO_ESTADO[e.tono]}`}>{e.etiqueta}</span>
+      <span className="text-noche/70">{e.detalle}</span>
+    </p>
+  );
+}
+
+function CasillaHola({ marcada }: { marcada?: boolean }) {
+  return (
+    <label className="flex items-center gap-2 text-sm" title="Meta solo entrega el aviso a quien antes le escribió al número de avisos o aceptó recibir mensajes.">
+      <input type="checkbox" name="hola" defaultChecked={marcada} className="size-4" />
+      Ya escribió «hola»
+    </label>
+  );
+}
 
 const legible = (n: string) => (n.startsWith("57") && n.length === 12 ? `+57 ${n.slice(2, 5)} ${n.slice(5, 8)} ${n.slice(8)}` : `+${n}`);
 
@@ -193,10 +221,11 @@ function CamposDestino({ d }: { d?: DestinoUI }) {
 export function AgregarDestinoForm() {
   const [s, action, pending] = useActionState(crearDestinoAction, undefined);
   return (
-    <form action={action} className="grid gap-2 sm:grid-cols-2 lg:grid-cols-[1fr_12rem_12rem_auto]">
+    <form action={action} className="grid gap-2 sm:grid-cols-2 lg:grid-cols-[1fr_12rem_12rem_auto_auto]">
       <CamposDestino />
+      <CasillaHola />
       <button className={boton} disabled={pending}>{pending ? "Agregando…" : "Agregar"}</button>
-      <div className="sm:col-span-2 lg:col-span-4"><Mensaje s={s} /></div>
+      <div className="sm:col-span-2 lg:col-span-5"><Mensaje s={s} /></div>
     </form>
   );
 }
@@ -204,16 +233,18 @@ export function AgregarDestinoForm() {
 export function DestinoFila({ d }: { d: DestinoUI }) {
   const [s, action, pending] = useActionState(actualizarDestinoAction, undefined);
   return (
-    <li className={`py-3 ${d.activo ? "" : "opacity-60"}`}>
-      <form action={action} className="grid items-center gap-2 sm:grid-cols-2 lg:grid-cols-[1fr_12rem_12rem_auto_auto]">
+    <li className={`space-y-2 py-3 ${d.activo ? "" : "opacity-60"}`}>
+      {d.estado && <EstadoChip e={d.estado} />}
+      <form action={action} className="grid items-center gap-2 sm:grid-cols-2 lg:grid-cols-[1fr_12rem_12rem_auto_auto_auto]">
         <input type="hidden" name="id" value={d.id} />
         <CamposDestino d={d} />
+        <CasillaHola marcada={d.hola} />
         <label className="flex items-center gap-2 text-sm">
           <input type="checkbox" name="activo" defaultChecked={d.activo} className="size-4" />
           Activo
         </label>
         <button className={botonSuave} disabled={pending}>{pending ? "Guardando…" : "Guardar"}</button>
-        {s && <div className="sm:col-span-2 lg:col-span-5"><Mensaje s={s} /></div>}
+        {s && <div className="sm:col-span-2 lg:col-span-6"><Mensaje s={s} /></div>}
       </form>
       <form action={borrarDestinoAction} className="mt-1">
         <input type="hidden" name="id" value={d.id} />

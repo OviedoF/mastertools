@@ -1,6 +1,6 @@
 /** Vocabulario del portal: roles, estados y permisos. Sin acceso a base de datos, se puede usar en el cliente. */
 
-export type Rol = "gerencia" | "comercial" | "operaciones" | "lectura";
+export type Rol = "gerencia" | "comercial" | "operaciones" | "lectura" | "tecnico";
 export type Tipo = "cotizacion" | "emergencia";
 export type Estado =
   | "nueva" | "contactada" | "en_cotizacion" | "ganada" | "perdida"
@@ -11,6 +11,7 @@ export const ROLES: Record<Rol, { label: string; descripcion: string }> = {
   comercial: { label: "Comercial", descripcion: "Gestiona cotizaciones y emergencias (comunicación y seguimiento)" },
   operaciones: { label: "Operaciones", descripcion: "Gestiona cotizaciones y emergencias, y ejecuta la atención técnica" },
   lectura: { label: "Lectura", descripcion: "Solo consulta" },
+  tecnico: { label: "Técnico", descripcion: "Solo la app Master Tools Campo: ve y ejecuta los servicios que le asignan" },
 };
 
 export const TIPOS: Record<Tipo, string> = { cotizacion: "Cotización", emergencia: "Emergencia" };

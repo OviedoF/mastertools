@@ -14,6 +14,8 @@ import { responderManta } from "./manta-faq";
 import type { RespuestaManta } from "./manta-preguntas";
 import { ejecutarRecordatorios } from "./recordatorios";
 import { avisarWhatsApp, whatsappConfigurado } from "@/lib/whatsapp";
+import { normalizarNumero } from "@/lib/telefono";
+import { probarWhatsAppCampo } from "@/lib/campo/notificar";
 import { CIERRE, FLUJO, ROLES, type Estado, type Rol, type Tipo } from "./model";
 
 const str = (f: FormData, k: string, max = 2000) => String(f.get(k) ?? "").trim().slice(0, max);
@@ -246,11 +248,15 @@ export async function crearUsuarioAction(_: FormState, f: FormData): Promise<For
   const correo = str(f, "correo", 200).toLowerCase();
   const rol = str(f, "rol") as Rol;
   if (!nombre || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(correo) || !(rol in ROLES)) return { error: "Revise el nombre, el correo y el rol." };
+  const telTxt = str(f, "telefono", 40);
+  const telefono = telTxt ? normalizarNumero(telTxt) : null;
+  if (telTxt && !telefono) return { error: "Revise el teléfono: con indicativo de país, por ejemplo +57 300 123 4567." };
+  if (rol === "tecnico" && !telefono) return { error: "Los técnicos necesitan teléfono de WhatsApp para recibir los servicios." };
   const dominios = (await getSetting("PORTAL_ALLOWED_DOMAINS")).split(",").map((d) => d.trim().toLowerCase()).filter(Boolean);
   if (dominios.length && !dominios.includes(correo.split("@")[1])) return { error: `Solo se admiten correos de ${dominios.join(", ")}.` };
   if (await one("select 1 from usuarios where lower(correo) = $1", [correo])) return { error: "Ya existe un usuario con ese correo." };
   const clave = tempPassword();
-  await query("insert into usuarios (nombre, correo, rol, clave_hash) values ($1,$2,$3,$4)", [nombre, correo, rol, await hashPassword(clave)]);
+  await query("insert into usuarios (nombre, correo, rol, clave_hash, telefono) values ($1,$2,$3,$4,$5)", [nombre, correo, rol, await hashPassword(clave), telefono]);
   revalidatePath("/portal/usuarios");
   return { ok: `Usuario creado: ${correo}`, clave };
 }
@@ -260,10 +266,15 @@ export async function actualizarUsuarioAction(f: FormData) {
   const id = str(f, "id");
   const rol = str(f, "rol") as Rol;
   const activo = f.get("activo") === "on";
-  if (!(rol in ROLES)) return;
+  const telTxt = str(f, "telefono", 40);
+  const telefono = telTxt ? normalizarNumero(telTxt) : null;
+  if (!(rol in ROLES) || (telTxt && !telefono)) return;
   if (id === admin.id && (!activo || rol !== "gerencia")) return; // no puede quitarse el acceso a sí mismo
-  await query("update usuarios set rol = $2, activo = $3 where id = $1", [id, rol, activo]);
-  if (!activo) await query("delete from sesiones where usuario = $1", [id]);
+  await query("update usuarios set rol = $2, activo = $3, telefono = $4 where id = $1", [id, rol, activo, telefono]);
+  if (!activo) {
+    await query("delete from sesiones where usuario = $1", [id]);
+    await query("delete from campo_sesiones where usuario = $1", [id]);
+  }
   revalidatePath("/portal/usuarios");
 }
 
@@ -278,13 +289,6 @@ export async function reiniciarClaveAction(_: FormState, f: FormData): Promise<F
 
 /* ----------------------- WhatsApp: números que reciben el aviso ----------------------- */
 
-/** Deja solo dígitos con indicativo. Un celular colombiano de 10 dígitos (3xx…) recibe el 57 delante. */
-function normalizarNumero(v: string): string | null {
-  let n = v.replace(/\D/g, "");
-  if (n.length === 10 && n.startsWith("3")) n = `57${n}`;
-  return /^\d{11,15}$/.test(n) ? n : null;
-}
-
 async function registrarCambioDestinos(usuario: string, accion: "guardado" | "quitado") {
   await query("insert into ajustes_historial (clave, usuario, accion) values ('WHATSAPP_DESTINOS', $1, $2)", [usuario, accion]);
   revalidatePath("/portal/ajustes");
@@ -296,9 +300,10 @@ export async function crearDestinoAction(_: FormState, f: FormData): Promise<For
   const nombre = str(f, "nombre", 80);
   const numero = normalizarNumero(str(f, "numero", 40));
   const cuando = str(f, "cuando") === "fuera_horario" ? "fuera_horario" : "siempre";
+  const hola = f.get("hola") === "on";
   if (!nombre) return { error: "Escriba el nombre de la persona o del turno." };
   if (!numero) return { error: "Revise el número: con indicativo de país, por ejemplo +57 300 123 4567." };
-  const r = await query("insert into whatsapp_destinos (nombre, numero, cuando, creado_por) values ($1,$2,$3,$4) on conflict (numero) do nothing returning id", [nombre, numero, cuando, admin.id]);
+  const r = await query("insert into whatsapp_destinos (nombre, numero, cuando, hola, creado_por) values ($1,$2,$3,$4,$5) on conflict (numero) do nothing returning id", [nombre, numero, cuando, hola, admin.id]);
   if (!r.length) return { error: "Ese número ya está en la lista." };
   await registrarCambioDestinos(admin.id, "guardado");
   return { ok: `Agregado: ${nombre}.` };
@@ -311,10 +316,19 @@ export async function actualizarDestinoAction(_: FormState, f: FormData): Promis
   const numero = normalizarNumero(str(f, "numero", 40));
   const cuando = str(f, "cuando") === "fuera_horario" ? "fuera_horario" : "siempre";
   const activo = f.get("activo") === "on";
+  const hola = f.get("hola") === "on";
   if (!/^\d+$/.test(id)) return { error: "No se encontró ese número." };
   if (!nombre || !numero) return { error: "Revise el nombre y el número." };
   try {
-    await query("update whatsapp_destinos set nombre = $2, numero = $3, cuando = $4, activo = $5 where id = $1", [id, nombre, numero, cuando, activo]);
+    // Si cambia el número, el resultado del último envío ya no vale.
+    await query(
+      `update whatsapp_destinos set nombre = $2, numero = $3, cuando = $4, activo = $5, hola = $6,
+              ultimo_envio_en = case when numero = $3 then ultimo_envio_en end,
+              ultimo_envio_ok = case when numero = $3 then ultimo_envio_ok end,
+              ultimo_envio_detalle = case when numero = $3 then ultimo_envio_detalle end
+        where id = $1`,
+      [id, nombre, numero, cuando, activo, hola],
+    );
   } catch {
     return { error: "Ese número ya está en la lista." };
   }
@@ -373,6 +387,10 @@ export async function probarConexionAction(_: FormState, f: FormData): Promise<F
       const r = await avisarWhatsApp("Mensaje de prueba desde el portal de Master Tools. No requiere ninguna acción.", { todos: true });
       if (r.errores.length) return { error: `Se enviaron ${r.enviados}; fallaron: ${r.errores.join(" | ")}` };
       return { ok: `Mensaje de prueba enviado a ${r.enviados} ${r.enviados === 1 ? "número" : "números"}.` };
+    }
+    if (que === "whatsapp_campo") {
+      const r = await probarWhatsAppCampo();
+      return r.ok ? { ok: r.detalle } : { error: r.detalle };
     }
     if (que === "recordatorio") {
       const r = await ejecutarRecordatorios({ forzar: true });

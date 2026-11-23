@@ -41,6 +41,29 @@ si falla, la emergencia igual queda registrada, avisada por correo y en la campa
 
 6. Pulsar **Enviar mensaje de prueba por WhatsApp**. Debe llegar a cada número un mensaje de la plantilla con un texto de prueba.
 
+## Segunda plantilla: servicios a técnicos (app de campo)
+
+Con el mismo número y el mismo token, el portal avisa a cada técnico cuando le asignan, reasignan, reprograman o
+cancelan un servicio. El mensaje trae un botón que abre el servicio en la app MT Campo.
+
+1. En el Administrador de WhatsApp > Plantillas > Crear:
+   - Categoría: **Utilidad**. Idioma: Español (`es`, el mismo de la primera). Nombre: `servicio_tecnico`.
+   - Cuerpo, con exactamente dos variables:
+     `Hola {{1}}, {{2}}`
+     Ejemplos para la revisión de Meta: {{1}} `Carlos`; {{2}} `le asignamos el servicio MT-2026-00012 · Cambio de medidor · Panadería La Espiga, Calle 30 # 21-45, Soledad, para el lunes 23 de noviembre a las 10:30 a. m.`
+   - Botón: **Visitar sitio web** > tipo **Dinámico** > texto `Abrir servicio` > URL `https://mastertools.tech/campo/s/{{1}}`
+     (ejemplo: `https://mastertools.tech/campo/s/3f2a9c1e-0000-0000-0000-000000000000`).
+2. En el portal: **Ajustes > WhatsApp a los técnicos** > `servicio_tecnico`.
+3. En **Usuarios**, cargar el teléfono de WhatsApp de cada técnico (es obligatorio al crear un técnico).
+   Cada técnico debe escribirle antes un «hola» al número de avisos o aceptar recibir mensajes.
+4. Pulsar **Enviar mensaje de prueba a los técnicos**.
+
+Cada envío (o el motivo por el que no salió: sin configurar, sin teléfono, error de Meta) queda en la tabla
+`campo_notificaciones`. Al avisar una asignación, el servicio pasa de *Programado* a *Notificado*.
+
+Prueba sin enviar mensajes reales (servidor de Meta simulado, base local):
+`DATABASE_URL=<local> npx tsx --conditions=react-server scripts/probar-whatsapp-campo.mts`
+
 ## Si no llega
 
 El botón de prueba muestra el error de Meta. Los más comunes:

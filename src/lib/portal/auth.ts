@@ -27,9 +27,10 @@ export type LoginResult = { ok: true } | { ok: false; error: string };
 export async function login(correo: string, clave: string): Promise<LoginResult> {
   const generic = { ok: false as const, error: "Correo o contraseña incorrectos." };
   const u = await one<{
-    id: string; clave_hash: string; activo: boolean; intentos: number; bloqueado_hasta: Date | null;
-  }>("select id, clave_hash, activo, intentos, bloqueado_hasta from usuarios where lower(correo) = lower($1)", [correo.trim()]);
-  if (!u || !u.activo) {
+    id: string; clave_hash: string; activo: boolean; intentos: number; bloqueado_hasta: Date | null; rol: Rol;
+  }>("select id, clave_hash, activo, intentos, bloqueado_hasta, rol from usuarios where lower(correo) = lower($1)", [correo.trim()]);
+  // Las cuentas de técnico solo entran por la app de campo (api/campo/sesion).
+  if (!u || !u.activo || u.rol === "tecnico") {
     await hashPassword(clave); // iguala el tiempo de respuesta
     return generic;
   }
@@ -74,7 +75,7 @@ export const currentUser = cache(async (): Promise<PortalUser | null> => {
   return one<PortalUser>(
     `select u.id, u.nombre, u.correo, u.rol, u.debe_cambiar
        from sesiones s join usuarios u on u.id = s.usuario
-      where s.token_hash = $1 and s.expira_en > now() and u.activo`,
+      where s.token_hash = $1 and s.expira_en > now() and u.activo and u.rol <> 'tecnico'`,
     [sha(t)],
   );
 });

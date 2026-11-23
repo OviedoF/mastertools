@@ -4,13 +4,14 @@ import { actualizarUsuarioAction } from "@/lib/portal/actions";
 import { requireAdmin } from "@/lib/portal/auth";
 import { query } from "@/lib/portal/db";
 import { ROLES, type Rol } from "@/lib/portal/model";
+import { numeroLegible } from "@/lib/telefono";
 
 export const metadata = { title: "Usuarios" };
 
 export default async function Usuarios() {
   const yo = await requireAdmin();
-  const usuarios = await query<{ id: string; nombre: string; correo: string; rol: Rol; activo: boolean; ultimo_acceso: Date | null }>(
-    "select id, nombre, correo, rol, activo, ultimo_acceso from usuarios order by activo desc, nombre",
+  const usuarios = await query<{ id: string; nombre: string; correo: string; rol: Rol; activo: boolean; ultimo_acceso: Date | null; telefono: string | null }>(
+    "select id, nombre, correo, rol, activo, ultimo_acceso, telefono from usuarios order by activo desc, nombre",
   );
   return (
     <div className="space-y-6">
@@ -21,6 +22,7 @@ export default async function Usuarios() {
         <CrearUsuarioForm />
         <p className="mt-3 text-xs text-noche/60">
           Se genera una contraseña temporal que verá una sola vez; la persona la cambia al primer ingreso.
+          Los técnicos ingresan solo por la app MT Campo y reciben los servicios por WhatsApp en el teléfono que se cargue aquí.
         </p>
       </section>
 
@@ -48,6 +50,14 @@ export default async function Usuarios() {
               </div>
               <form action={actualizarUsuarioAction} className="flex flex-wrap items-center gap-3">
                 <input type="hidden" name="id" value={x.id} />
+                <input
+                  name="telefono"
+                  defaultValue={x.telefono ? numeroLegible(x.telefono) : ""}
+                  placeholder="WhatsApp"
+                  inputMode="tel"
+                  aria-label={`Teléfono de WhatsApp de ${x.nombre}`}
+                  className={`${input} w-44`}
+                />
                 <select name="rol" defaultValue={x.rol} aria-label={`Rol de ${x.nombre}`} className={`${input} w-40`} disabled={x.id === yo.id}>
                   {Object.entries(ROLES).map(([k, r]) => (
                     <option key={k} value={k}>{r.label}</option>

@@ -25,7 +25,7 @@ export type AjusteDef = {
   validar?: (v: string) => string | null;
 };
 
-export type GrupoId = "analytics" | "correo" | "avisos" | "whatsapp" | "acceso";
+export type GrupoId = "analytics" | "correo" | "avisos" | "whatsapp" | "campo" | "acceso";
 
 export const GRUPOS: Record<GrupoId, { titulo: string; descripcion: string }> = {
   analytics: {
@@ -43,6 +43,10 @@ export const GRUPOS: Record<GrupoId, { titulo: string; descripcion: string }> = 
   whatsapp: {
     titulo: "Aviso de emergencias por WhatsApp",
     descripcion: "Cada emergencia nueva se avisa por WhatsApp al equipo de turno, con la API oficial de Meta, desde el número +57 312 425 9438. Guía en docs/WHATSAPP.md.",
+  },
+  campo: {
+    titulo: "WhatsApp a los técnicos (app de campo)",
+    descripcion: "Al asignar, reasignar, reprogramar o cancelar un servicio, el técnico recibe un WhatsApp con un botón que abre el servicio en la app. Usa el mismo número y token de arriba. Guía en docs/CAMPO.md.",
   },
   acceso: {
     titulo: "Acceso al portal",
@@ -105,6 +109,11 @@ export const AJUSTES: AjusteDef[] = [
     placeholder: "aviso_emergencia", validar: (v) => (/^[a-z0-9_]{1,512}$/.test(v) ? null : "Solo minúsculas, números y guion bajo."),
   },
   { clave: "WHATSAPP_LANG", grupo: "whatsapp", etiqueta: "Idioma de la plantilla", ayuda: "Código del idioma con el que se aprobó. Por defecto: es.", placeholder: "es", validar: (v) => (/^[a-z]{2}(_[A-Z]{2})?$/.test(v) ? null : "Por ejemplo: es o es_CO.") },
+  {
+    clave: "WHATSAPP_TEMPLATE_CAMPO", grupo: "campo", etiqueta: "Nombre de la plantilla para técnicos",
+    ayuda: "Plantilla de Utilidad con dos variables y un botón de URL dinámico: «Hola {{1}}, {{2}}» y el botón «Abrir servicio» → https://mastertools.tech/campo/s/{{1}}. El teléfono de cada técnico se carga en Usuarios.",
+    placeholder: "servicio_tecnico", validar: (v) => (/^[a-z0-9_]{1,512}$/.test(v) ? null : "Solo minúsculas, números y guion bajo."),
+  },
   { clave: "PORTAL_ALLOWED_DOMAINS", grupo: "acceso", etiqueta: "Dominios permitidos para usuarios", ayuda: "Separados por coma. Solo correos de esos dominios pueden tener usuario.", placeholder: "mastertools.tech", validar: noVacio },
 ];
 

@@ -174,3 +174,179 @@ create table if not exists whatsapp_destinos (
   creado_en   timestamptz not null default now(),
   creado_por  uuid references usuarios(id) on delete set null
 );
+-- Estado de cada número en Ajustes: si ya le escribió «hola» al número de avisos (lo marca el cliente)
+-- y el resultado del último envío (prueba o aviso real).
+alter table whatsapp_destinos add column if not exists hola boolean not null default false;
+alter table whatsapp_destinos add column if not exists ultimo_envio_en timestamptz;
+alter table whatsapp_destinos add column if not exists ultimo_envio_ok boolean;
+alter table whatsapp_destinos add column if not exists ultimo_envio_detalle text;
+
+-- =====================================================================================
+-- Operaciones de campo (app Master Tools Campo). Ver docs/CAMPO.md.
+-- =====================================================================================
+
+-- Rol técnico (solo entra por la app) y teléfono para el WhatsApp de asignación.
+alter table usuarios drop constraint if exists usuarios_rol_check;
+alter table usuarios add constraint usuarios_rol_check check (rol in ('gerencia','comercial','operaciones','lectura','tecnico'));
+alter table usuarios add column if not exists telefono text;          -- solo dígitos, con indicativo: 573001234567
+
+-- Sesiones de la app (token Bearer). Separadas de las del portal: duran más para trabajar sin señal.
+create table if not exists campo_sesiones (
+  token_hash text primary key,
+  usuario    uuid not null references usuarios(id) on delete cascade,
+  expira_en  timestamptz not null,
+  creada_en  timestamptz not null default now(),
+  usada_en   timestamptz not null default now()
+);
+create index if not exists campo_sesiones_usuario on campo_sesiones (usuario);
+
+-- Catálogos administrables (secciones 3 y 7 de la especificación).
+create table if not exists campo_clientes          (id bigserial primary key, nombre text not null unique, activo boolean not null default true);
+create table if not exists campo_comercializadores (id bigserial primary key, nombre text not null unique, activo boolean not null default true);
+create table if not exists campo_actividades       (id bigserial primary key, nombre text not null unique, activo boolean not null default true);
+
+-- Ítems de los formularios. Si una lista está vacía, la app usa su copia de fábrica.
+create table if not exists campo_items (
+  id       text not null,
+  lista    text not null check (lista in ('epp','energia','aptitud','alturas','herramientas','vehiculo','peligros','resultados')),
+  texto    text not null,
+  critico  boolean not null default false,
+  ayuda    text,
+  orden    int not null default 0,
+  activo   boolean not null default true,
+  actualizado_en timestamptz not null default now(),
+  primary key (lista, id)
+);
+
+create sequence if not exists campo_servicios_consecutivo;
+
+create table if not exists campo_servicios (
+  id            uuid primary key default gen_random_uuid(),
+  codigo        text not null unique default ('MT-' || to_char(now(), 'YYYY') || '-' || lpad(nextval('campo_servicios_consecutivo')::text, 5, '0')),
+  cliente       text not null,
+  direccion     text not null,
+  lat           double precision,
+  lng           double precision,
+  id_frontera   text,
+  comercializador text,
+  departamento  text not null,
+  ciudad        text not null,
+  actividad     text not null,
+  fecha_hora    timestamptz not null,
+  descripcion   text,
+  tecnico       uuid references usuarios(id) on delete set null,
+  alturas       boolean not null,
+  vehiculo      boolean not null,
+  estado        text not null default 'programado' check (estado in
+    ('programado','notificado','en_sitio','en_ejecucion','finalizado','no_ejecutado','reprogramado','cancelado')),
+  motivo_cancelacion text,
+  inicio_en     timestamptz,
+  inicio_lat    double precision,
+  inicio_lng    double precision,
+  fin_en        timestamptz,
+  fin_lat       double precision,
+  fin_lng       double precision,
+  observacion   text,
+  resultado     text,
+  resultado_detalle text,
+  no_ejecutado_motivo text,
+  creado_por    uuid references usuarios(id) on delete set null,
+  creado_en     timestamptz not null default now(),
+  actualizado_en timestamptz not null default now()
+);
+create index if not exists campo_servicios_tecnico on campo_servicios (tecnico, fecha_hora);
+create index if not exists campo_servicios_fecha on campo_servicios (fecha_hora desc);
+create index if not exists campo_servicios_filtros on campo_servicios (actividad, cliente, comercializador);
+
+-- ATS y pre-operacional: una fila por servicio, inmutables una vez enviados (solo consulta).
+create table if not exists campo_ats (
+  servicio   uuid primary key references campo_servicios(id) on delete cascade,
+  respuestas jsonb not null,
+  firma      text,
+  firmado_en timestamptz,
+  usuario    uuid references usuarios(id) on delete set null,
+  recibido_en timestamptz not null default now()
+);
+create table if not exists campo_preoperacionales (
+  servicio   uuid primary key references campo_servicios(id) on delete cascade,
+  respuestas jsonb not null,
+  firma      text,
+  firmado_en timestamptz,
+  usuario    uuid references usuarios(id) on delete set null,
+  recibido_en timestamptz not null default now()
+);
+
+-- Archivos (fotos, firmas, PDF). Viven en la base como los adjuntos del portal; si el volumen crece
+-- se mueven a un bucket (S3, R2, Supabase Storage) y aquí queda solo la referencia.
+create table if not exists campo_archivos (
+  id        text primary key,                     -- generado en el celular: "foto-<uuid>", "firma-<uuid>"… (idempotente)
+  servicio  uuid not null references campo_servicios(id) on delete cascade,
+  clase     text not null check (clase in ('evidencia','firma','preoperacional','documento')),
+  nombre    text not null,
+  tipo      text not null,
+  tamano    int not null,
+  datos     bytea not null,
+  usuario   uuid references usuarios(id) on delete set null,
+  creado_en timestamptz not null default now()
+);
+create index if not exists campo_archivos_servicio on campo_archivos (servicio, clase);
+
+create table if not exists campo_evidencias (
+  id        uuid primary key,
+  servicio  uuid not null references campo_servicios(id) on delete cascade,
+  archivo   text not null references campo_archivos(id) on delete cascade,
+  tomada_en timestamptz not null,
+  comentario text
+);
+create index if not exists campo_evidencias_servicio on campo_evidencias (servicio, tomada_en);
+
+create table if not exists campo_documentos (
+  servicio  uuid not null references campo_servicios(id) on delete cascade,
+  tipo      text not null check (tipo in ('informe','ats','preoperacional')),
+  archivo   text not null references campo_archivos(id) on delete cascade,
+  generado_en timestamptz not null default now(),
+  primary key (servicio, tipo)
+);
+
+-- Cada operación que envía la app, una sola vez (id generado en el celular). Es también la trazabilidad:
+-- quién hizo qué y cuándo (hora del celular y hora de llegada al servidor).
+create table if not exists campo_operaciones (
+  id        uuid primary key,
+  servicio  uuid not null references campo_servicios(id) on delete cascade,
+  usuario   uuid references usuarios(id) on delete set null,
+  tipo      text not null,
+  datos     jsonb not null default '{}'::jsonb,
+  creado_en timestamptz not null,
+  recibido_en timestamptz not null default now()
+);
+create index if not exists campo_operaciones_servicio on campo_operaciones (servicio, creado_en);
+
+-- Alertas para el administrador (respuestas críticas del ATS, herramientas en mal estado).
+create table if not exists campo_alertas (
+  id        bigserial primary key,
+  servicio  uuid not null references campo_servicios(id) on delete cascade,
+  origen    text not null,
+  bloqueante boolean not null default false,
+  motivos   jsonb not null,
+  atendida  boolean not null default false,
+  creada_en timestamptz not null default now()
+);
+
+-- Notificaciones enviadas (push y WhatsApp) y su estado.
+create table if not exists campo_notificaciones (
+  id        bigserial primary key,
+  servicio  uuid not null references campo_servicios(id) on delete cascade,
+  usuario   uuid references usuarios(id) on delete set null,
+  canal     text not null check (canal in ('push','whatsapp')),
+  estado    text not null check (estado in ('enviada','fallida','sin_configurar')),
+  detalle   text,
+  creada_en timestamptz not null default now()
+);
+
+-- Celulares registrados para notificaciones push.
+create table if not exists campo_dispositivos (
+  token     text primary key,
+  usuario   uuid not null references usuarios(id) on delete cascade,
+  plataforma text not null,
+  actualizado_en timestamptz not null default now()
+);
