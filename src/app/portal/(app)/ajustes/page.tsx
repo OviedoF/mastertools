@@ -17,6 +17,7 @@ const ORIGEN = {
 /** Errores frecuentes de Meta, en palabras del cliente. */
 function explicarErrorMeta(detalle: string | null): string {
   const d = detalle ?? "";
+  if (/Paid Message Account|\(#10\)/i.test(d)) return "Meta no puede cobrar el mensaje: la cuenta de WhatsApp no tiene un método de pago válido (Administrador de WhatsApp > Añadir método de pago).";
   if (/131026|undeliverable/i.test(d)) return "WhatsApp no pudo entregarlo: el número no tiene WhatsApp, o la persona no le ha escrito al número de avisos.";
   if (/131030|not in allowed list/i.test(d)) return "La cuenta de Meta está en modo de prueba y este número no está autorizado en ella.";
   if (/132001|template name does not exist/i.test(d)) return "La plantilla no existe o aún no está aprobada (revise el nombre y el idioma).";

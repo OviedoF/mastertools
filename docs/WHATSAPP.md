@@ -48,8 +48,8 @@ cancelan un servicio. El mensaje trae un botón que abre el servicio en la app M
 
 1. En el Administrador de WhatsApp > Plantillas > Crear:
    - Categoría: **Utilidad**. Idioma: Español (`es`, el mismo de la primera). Nombre: `servicio_tecnico`.
-   - Cuerpo, con exactamente dos variables:
-     `Hola {{1}}, {{2}}`
+   - Cuerpo, con exactamente dos variables (Meta no deja que el texto termine en una variable):
+     `Hola {{1}}, hay una actualización en su orden de trabajo de campo: {{2}} Toque el botón para abrirlo en la app MT Campo.`
      Ejemplos para la revisión de Meta: {{1}} `Carlos`; {{2}} `le asignamos el servicio MT-2026-00012 · Cambio de medidor · Panadería La Espiga, Calle 30 # 21-45, Soledad, para el lunes 23 de noviembre a las 10:30 a. m.`
    - Botón: **Visitar sitio web** > tipo **Dinámico** > texto `Abrir servicio` > URL `https://mastertools.tech/campo/s/{{1}}`
      (ejemplo: `https://mastertools.tech/campo/s/3f2a9c1e-0000-0000-0000-000000000000`).

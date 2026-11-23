@@ -7,7 +7,7 @@ import { enviarPlantilla } from "@/lib/whatsapp";
  * WhatsApp al técnico cuando cambia algo de un servicio suyo (especificación, sección 8).
  *
  * Plantilla de Meta (categoría Utilidad), nombre en Ajustes > WHATSAPP_TEMPLATE_CAMPO:
- *   Cuerpo:  Hola {{1}}, {{2}}
+ *   Cuerpo:  Hola {{1}}, hay una actualización en su orden de trabajo de campo: {{2}} Toque el botón para abrirlo en la app MT Campo.
  *   Botón:   URL dinámica «Abrir servicio» → https://mastertools.tech/campo/s/{{1}}
  * {{1}} del cuerpo es el primer nombre; {{2}} el aviso armado aquí; el sufijo del botón es el id del servicio.
  * El enlace abre la app en el servicio (pide ingresar si no hay sesión).
